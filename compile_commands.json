@@ -1,0 +1,44 @@
+[
+ {
+  "directory": "/Users/zane/repos/wax",
+  "arguments": [
+   "cc",
+   "-c",
+   "audio.c",
+   "-Wall",
+   "-Werror",
+   "-I/opt/homebrew/opt/ncurses/include",
+   "-o",
+   "audio.o"
+  ],
+  "file": "audio.c"
+ },
+ {
+  "directory": "/Users/zane/repos/wax",
+  "arguments": [
+   "cc",
+   "-c",
+   "ui.c",
+   "-Wall",
+   "-Werror",
+   "-I/opt/homebrew/opt/ncurses/include",
+   "-o",
+   "ui.o"
+  ],
+  "file": "ui.c"
+ },
+ {
+  "directory": "/Users/zane/repos/wax",
+  "arguments": [
+   "cc",
+   "-c",
+   "main.c",
+   "-Wall",
+   "-Werror",
+   "-I/opt/homebrew/opt/ncurses/include",
+   "-o",
+   "main.o"
+  ],
+  "file": "main.c"
+ }
+]
