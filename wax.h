@@ -12,6 +12,12 @@ void cleanup();
 /* Load song into engine and play it, stopping any currently playing song */
 void loadSound(char *songpath);
 
+int getSongTime();
+
+void toggleSong();
+
+void restartSong();
+
 /* Callback function for ftw() */
 int addSongsToList(const char *path, const struct stat *sptr, int type);
 

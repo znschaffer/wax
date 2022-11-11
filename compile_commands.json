@@ -6,7 +6,6 @@
    "-c",
    "audio.c",
    "-Wall",
-   "-Werror",
    "-I/opt/homebrew/opt/ncurses/include",
    "-o",
    "audio.o"
@@ -18,27 +17,25 @@
   "arguments": [
    "cc",
    "-c",
-   "ui.c",
+   "main.c",
    "-Wall",
-   "-Werror",
    "-I/opt/homebrew/opt/ncurses/include",
    "-o",
-   "ui.o"
+   "main.o"
   ],
-  "file": "ui.c"
+  "file": "main.c"
  },
  {
   "directory": "/Users/zane/repos/wax",
   "arguments": [
    "cc",
    "-c",
-   "main.c",
+   "ui.c",
    "-Wall",
-   "-Werror",
    "-I/opt/homebrew/opt/ncurses/include",
    "-o",
-   "main.o"
+   "ui.o"
   ],
-  "file": "main.c"
+  "file": "ui.c"
  }
 ]

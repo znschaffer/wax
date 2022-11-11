@@ -12,5 +12,7 @@ int main(int argc, char **argv) {
   setupMA();
   setupUI();
 
+  setupUI();
+
   cleanup();
 }

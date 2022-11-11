@@ -11,6 +11,7 @@ void setupCurses() {
   cbreak();
   noecho();
   keypad(stdscr, TRUE);
+  nodelay(stdscr, TRUE);
   curs_set(0);
 }
 
@@ -24,6 +25,7 @@ void setupUI() {
   refresh();
 
   while ((ch = getch()) != KEY_F(1)) {
+    mvprintw(LINES-3, 0, "%d", getSongTime());
     handleInput(ch);
   }
 }
