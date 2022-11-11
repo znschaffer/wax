@@ -22,6 +22,7 @@ void setupUI() {
   song_menu = new_menu((ITEM **)songs);
   post_menu(song_menu);
   refresh();
+
   while ((ch = getch()) != KEY_F(1)) {
     handleInput(ch);
   }
@@ -32,12 +33,14 @@ void loadDirectory(char *dirPath) { ftw(dirPath, addSongsToList, 7); }
 void handleInput(int ch) {
   switch (ch) {
   case 'j':
+  case KEY_DOWN:
     menu_driver(song_menu, REQ_DOWN_ITEM);
     break;
   case 'k':
+  case KEY_UP:
     menu_driver(song_menu, REQ_UP_ITEM);
     break;
-  case KEY_ENTER:
+  case 'p':
     mvprintw(LINES - 2, 0, "loading song from %s\n",
              song_menu->curitem->name.str);
     refresh();
