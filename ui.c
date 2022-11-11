@@ -1,8 +1,7 @@
 #include "wax.h"
 #include <stdlib.h>
 
-char file_paths[200][100]; // TODO: find a better way to do this
-ITEM **songs;
+ITEM **song_items;
 MENU *song_menu;
 int n_songs = 0;
 
@@ -18,9 +17,9 @@ void setupCurses() {
 void setupUI() {
   int ch;
   setupCurses();
-  songs = (ITEM **)calloc(n_songs + 1, sizeof(ITEM *));
+  song_items = (ITEM **)calloc(200, sizeof(ITEM *));
   loadSongs();
-  song_menu = new_menu((ITEM **)songs);
+  song_menu = new_menu((ITEM **)song_items);
   post_menu(song_menu);
   refresh();
 
@@ -29,8 +28,6 @@ void setupUI() {
     handleInput(ch);
   }
 }
-
-void loadDirectory(char *dirPath) { ftw(dirPath, addSongsToList, 7); }
 
 void handleInput(int ch) {
   switch (ch) {
@@ -46,7 +43,11 @@ void handleInput(int ch) {
     mvprintw(LINES - 2, 0, "loading song from %s\n",
              song_menu->curitem->name.str);
     refresh();
-    loadSound((char *)song_menu->curitem->name.str);
+    loadSound(song_menu->curitem);
     break;
   }
+}
+
+void cleanupUI() {
+  endwin();
 }

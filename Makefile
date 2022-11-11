@@ -1,6 +1,7 @@
 BIN = wax
-CFLAGS = -Wall -I/opt/homebrew/opt/ncurses/include 
-LDFLAGS =-L/opt/homebrew/opt/ncurses/lib -lmenu -lncurses 
+CFLAGS=-g -Wall $(shell pkg-config --cflags menu ncurses taglib_c)
+LDFLAGS= $(shell pkg-config --libs menu ncurses taglib_c)
+
 SOURCES = $(wildcard *.c)
 OBJECTS = $(SOURCES:.c=.o)
 

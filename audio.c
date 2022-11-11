@@ -1,6 +1,8 @@
+#include "id3v2lib/types.h"
 #define MINIAUDIO_IMPLEMENTATION
 #include "miniaudio.h"
 #include "wax.h"
+#include <id3v2lib.h>
 
 ma_result result;
 ma_engine engine;
@@ -12,39 +14,35 @@ int setupMA() {
 
   if (result != MA_SUCCESS) {
     printf("Failed to init audio engine.\n");
-    cleanup();
+    cleanupMA();
+    cleanupUI();
     return -1;
   }
   rm = *ma_engine_get_resource_manager(&engine);
   return 0;
 }
 
-void loadSound(char *songpath) {
+void loadSound(ITEM *item) {
+  songs *song;
+  char *path;
+  for (song = songList; NULL != song; song = song->next) {
+    if ((strcmp(item->description.str, song->title) == 0))
+      if ((strcmp(item->name.str, song->artist) == 0))
+        path = song->path;
+  }
+  if (path == NULL)
+    return;
+
   if (ma_sound_is_playing(&sound)) {
     ma_sound_stop(&sound);
     ma_sound_uninit(&sound);
   }
-  ma_sound_init_from_file(&engine, songpath, 0, NULL, NULL, &sound);
+  ma_sound_init_from_file(&engine, path, 0, NULL, NULL, &sound);
   ma_sound_start(&sound);
 }
 
-int addSongsToList(const char *path, const struct stat *sptr, int type) {
-  if (type == FTW_F && strstr(path, ".mp3")) {
-    mvprintw(LINES - 3, 0, "%s", (char *)path);
-    refresh();
-    strcpy(file_paths[n_songs], path);
-    n_songs++;
-  }
-  return 0;
-}
-
-void loadSongs() {
-  for (int i = 0; i < n_songs; i++) {
-    songs[i] = new_item(file_paths[i], file_paths[i]);
-  }
-}
-
 void toggleSong() {
+
   ma_sound_is_playing(&sound) ? ma_sound_stop(&sound) : ma_sound_start(&sound);
 }
 
@@ -54,13 +52,12 @@ int getSongTime() {
   ma_uint64 pCursor;
   result = ma_sound_get_cursor_in_pcm_frames(&sound, &pCursor);
   if (result != MA_SUCCESS) {
-    return result;
+    return 0;
   }
   return (int)(pCursor / engine.sampleRate);
 }
 
-void cleanup() {
+void cleanupMA() {
   ma_sound_uninit(&sound);
   ma_engine_uninit(&engine);
-  endwin();
 }

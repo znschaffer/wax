@@ -1,4 +1,6 @@
 *.o
 .cache
 .cache/*
+compile_commands.json
 wax
+wax.log
