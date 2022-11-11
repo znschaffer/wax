@@ -11,6 +11,7 @@ void setupCurses() {
   cbreak();
   noecho();
   keypad(stdscr, TRUE);
+  nodelay(stdscr, TRUE);
   curs_set(0);
 }
 
@@ -23,6 +24,7 @@ void setupUI() {
   post_menu(song_menu);
   refresh();
   while ((ch = getch()) != KEY_F(1)) {
+    mvprintw(LINES-3, 0, "%d", getSongTime());
     handleInput(ch);
   }
 }
@@ -37,7 +39,7 @@ void handleInput(int ch) {
   case 'k':
     menu_driver(song_menu, REQ_UP_ITEM);
     break;
-  case KEY_ENTER:
+  case 'p':
     mvprintw(LINES - 2, 0, "loading song from %s\n",
              song_menu->curitem->name.str);
     refresh();

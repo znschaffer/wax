@@ -9,9 +9,9 @@ int main(int argc, char **argv) {
 
   loadDirectory(argv[1]);
 
-  setupUI();
-
   setupMA();
+
+  setupUI();
 
   cleanup();
 }

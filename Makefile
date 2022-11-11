@@ -1,5 +1,5 @@
 BIN = wax
-CFLAGS = -Wall -Werror -I/opt/homebrew/opt/ncurses/include 
+CFLAGS = -Wall -I/opt/homebrew/opt/ncurses/include 
 LDFLAGS =-L/opt/homebrew/opt/ncurses/lib -lmenu -lncurses 
 SOURCES = $(wildcard *.c)
 OBJECTS = $(SOURCES:.c=.o)
