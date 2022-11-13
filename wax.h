@@ -6,6 +6,7 @@
 #include <ncurses.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <taglib/tag_c.h>
 
 typedef struct song_file {
@@ -65,6 +66,18 @@ extern ITEM **song_items;
 
 /* Menu list holding songs */
 extern MENU *song_menu;
+
+/** Colors */
+void setupColors();
+
+/** menu functions*/
+void printMiddle(WINDOW *win, int starty, int startx, int width, char *string,
+                 chtype color);
+
+char *getCurrTitle(short);
+
+/** Logging */
+void logSongList(void);
 
 /* Number of songs we know about */
 extern int n_songs;

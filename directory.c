@@ -1,6 +1,5 @@
 #include "wax.h"
 #include <stdlib.h>
-#include <string.h>
 
 songs *songList;
 FILE *log_file;
@@ -25,7 +24,7 @@ void populateSongItems() {
 void logSongList(void) {
   songs *song;
   for (song = songList; NULL != song; song = song->next) {
-    fprintf(log_file, "path: %s", song->path);
+    fprintf(log_file, "path: %s\n", song->path);
   }
 }
 
