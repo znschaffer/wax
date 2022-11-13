@@ -14,7 +14,7 @@ void setupCurses() {
   curs_set(0);
 }
 
-void setupUI() {
+int setupUI() {
   int ch;
   setupCurses();
   song_items = (ITEM **)calloc(200, sizeof(ITEM *));
@@ -27,6 +27,7 @@ void setupUI() {
     mvprintw(LINES-3, 0, "%d", getSongTime());
     handleInput(ch);
   }
+  return 0;
 }
 
 void handleInput(int ch) {

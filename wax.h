@@ -5,6 +5,7 @@
 #include <menu.h>
 #include <ncurses.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <taglib/tag_c.h>
 
 typedef struct song_file {
@@ -28,7 +29,7 @@ void cleanupMA();
 /* Teardown the ncurses ui */
 void cleanupUI();
 
-void setupDir(char *dirPath);
+int setupDir(char *dirPath);
 /* Load song into engine and play it, stopping any currently playing song */
 void loadSound(ITEM *item);
 
@@ -57,7 +58,7 @@ int setupMA();
 void handleInput(int c);
 
 /* Bootstraps ncurses menu with all the song names from loadSongs */
-void setupUI();
+int setupUI();
 
 /* Array of (ITEM *)songs */
 extern ITEM **song_items;

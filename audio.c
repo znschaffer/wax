@@ -11,9 +11,7 @@ int setupMA() {
   result = ma_engine_init(NULL, &engine);
 
   if (result != MA_SUCCESS) {
-    printf("Failed to init audio engine.\n");
     cleanupMA();
-    cleanupUI();
     return -1;
   }
   rm = *ma_engine_get_resource_manager(&engine);

@@ -10,17 +10,15 @@ TagLib_Tag *tag;
 int parseDirectory(const char *path, const struct stat *sptr, int type) {
   if (type == FTW_F && strstr(path, ".mp3")) {
     songList = parseAudioFile(songList, (char *)path);
-    // fprintf(log_file, "artist: %s \t path: %s\n", songList->artist,
-    // songList->path);
   }
   return 0;
 }
 
 void populateSongItems() {
-  int i = 0;
-  for (songs *song = songList; song->next != NULL; song = song->next) {
-    song_items[i] = new_item(song->artist, song->title);
-    i++;
+  if (songList == NULL)
+    return;
+  for (songs *song = songList; song != NULL; song = song->next) {
+    song_items[n_songs++] = new_item(song->artist, song->title);
   }
 }
 
@@ -31,10 +29,10 @@ void logSongList(void) {
   }
 }
 
-void setupDir(char *dirPath) {
-  /* ftw walks a dirPath, running parseDirectory as a callback function for each
-   * fd */
+int setupDir(char *dirPath) {
   ftw(dirPath, parseDirectory, 7);
+  if (songList == NULL)
+    return -1;
 }
 
 songs *newSongNode(char *path) {
