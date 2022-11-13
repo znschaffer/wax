@@ -1,8 +1,6 @@
-#include "id3v2lib/types.h"
 #define MINIAUDIO_IMPLEMENTATION
 #include "miniaudio.h"
 #include "wax.h"
-#include <id3v2lib.h>
 
 ma_result result;
 ma_engine engine;

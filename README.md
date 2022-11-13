@@ -9,6 +9,8 @@ If you're on OSX:
 
 ```bash
 brew install taglib ncurses
+export PKG_CONFIG_PATH="/opt/homebrew/opt/ncurses/lib/pkgconfig"
+make
 ```
 
 ## Usage

@@ -18,7 +18,7 @@ void setupUI() {
   int ch;
   setupCurses();
   song_items = (ITEM **)calloc(200, sizeof(ITEM *));
-  loadSongs();
+  populateSongItems();
   song_menu = new_menu((ITEM **)song_items);
   post_menu(song_menu);
   refresh();

@@ -1,28 +1,31 @@
 #ifndef WAX_H
 #define WAX_H
 
-#include <taglib/tag_c.h> 
 #include <ftw.h>
 #include <menu.h>
 #include <ncurses.h>
 #include <stdio.h>
+#include <taglib/tag_c.h>
 
 typedef struct song_file {
   char path[300];
   char artist[200];
   char title[200];
   char album[200];
-  struct song_file* next;
+  struct song_file *next;
 } songs;
 
-extern songs* songList;
+extern songs *songList;
 
-songs* create_song(char *path);
-songs* add_song(songs* songList, char *path);
+songs *newSongNode(char *path);
 
-/* Free all allocated memory and close ncurses */
+/* parse audiofile and return a songList with that file as the new head node */
+songs *parseAudioFile(songs *songList, char *path);
 
+/* Teardown the audio engine */
 void cleanupMA();
+
+/* Teardown the ncurses ui */
 void cleanupUI();
 
 void setupDir(char *dirPath);
@@ -42,7 +45,7 @@ int addSongsToList(const char *path, const struct stat *sptr, int type);
 void loadDirectory(char *dirPath);
 
 /* Loads every file in file_paths as an *ITEM in songs */
-void loadSongs();
+void populateSongItems();
 
 /* Basic ncurses setup code */
 void setupCurses();
@@ -55,7 +58,6 @@ void handleInput(int c);
 
 /* Bootstraps ncurses menu with all the song names from loadSongs */
 void setupUI();
-
 
 /* Array of (ITEM *)songs */
 extern ITEM **song_items;
