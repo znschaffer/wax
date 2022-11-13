@@ -24,11 +24,12 @@ int setupUI() {
   populateSongItems();
   song_menu = new_menu((ITEM **)song_items);
 
+  /* Init windows */
   song_win = newwin(0, 0, 0, 0);
   keypad(song_win, TRUE);
 
   set_menu_win(song_menu, song_win);
-  set_menu_sub(song_menu, derwin(song_win, n_songs, COLS - 10, 3, 3));
+  set_menu_sub(song_menu, derwin(song_win, n_songs, COLS - 10, 4, 2));
 
   set_menu_mark(song_menu, " > ");
 
@@ -36,17 +37,17 @@ int setupUI() {
   box(song_win, 0, 0);
   title = "wax";
 
-  // print_in_middle(song_win, 1, (COLS / 2) - (strlen(title) / 2),
-  // strlen(title),
-  //                 title, 1);
+  printMiddle(song_win, 1, (COLS / 2) - (strlen(title) / 2), strlen(title),
+              title, 1);
   mvwhline(song_win, 2, 1, ACS_HLINE, COLS - 2);
+  mvwhline(song_win, LINES - 10, 1, ACS_HLINE, COLS - 2);
+  mvwvline(song_win, LINES - 9, COLS - COLS / 4, ACS_VLINE, 8);
   refresh();
-
   post_menu(song_menu);
   wrefresh(song_win);
 
   while ((ch = getch()) != KEY_F(1)) {
-    mvprintw(LINES - 3, 0, "%d", getSongTime());
+    mvprintw(1, COLS - 4, "%d", getSongTime());
     handleInput(ch);
   }
   return 0;
@@ -63,8 +64,9 @@ void handleInput(int ch) {
     menu_driver(song_menu, REQ_UP_ITEM);
     break;
   case 'p':
-    move(1, 1);
-    clrtoeol();
+    for (int i = 1; i < COLS - 1; i++) {
+      mvprintw(1, i, " ");
+    }
     printMiddle(song_win, 1,
                 (COLS / 2) -
                     (strlen(getCurrTitle(song_menu->curitem->index)) / 2),

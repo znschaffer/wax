@@ -2,8 +2,8 @@
 .cache
 .cache/*
 compile_commands.json
-wax
-wav.log
+wax.log
 test-audio
 .DS_Store
 .vscode/
+wax
