@@ -3,7 +3,7 @@
 .cache/*
 compile_commands.json
 wax
-wax.log
+wav.log
 test-audio
 .DS_Store
 .vscode/
