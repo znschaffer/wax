@@ -4,3 +4,6 @@
 compile_commands.json
 wax
 wax.log
+test-audio
+.DS_Store
+.vscode/
