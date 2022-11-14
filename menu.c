@@ -3,7 +3,9 @@
 
 char *getCurrTitle(short index) {
 
-  char *str[100];
+  char *str = calloc(song_items[index]->name.length +
+                         song_items[index]->description.length + 3,
+                     sizeof(char));
 
   strcpy(str, "Now Playing: ");
   strcat(str, song_items[index]->name.str);
