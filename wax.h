@@ -2,8 +2,10 @@
 #define WAX_H
 
 #include <ftw.h>
-#include <menu.h>
-#include <ncurses.h>
+#include <ncursesw/menu.h>
+#include <signal.h>
+#include <sys/ioctl.h>
+#include <ncursesw/ncurses.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -18,12 +20,15 @@ typedef struct song_file {
 } songs;
 
 extern songs *songList;
+extern struct sigaction sa;
+extern FILE *log_file;
 
 songs *newSongNode(char *path);
 
 /* parse audiofile and return a songList with that file as the new head node */
 songs *parseAudioFile(songs *songList, char *path);
 
+void handle_winch(int sig);
 /* Teardown the audio engine */
 void cleanupMA();
 

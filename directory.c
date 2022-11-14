@@ -2,7 +2,6 @@
 #include <stdlib.h>
 
 songs *songList;
-FILE *log_file;
 TagLib_File *file;
 TagLib_Tag *tag;
 
@@ -17,7 +16,13 @@ void populateSongItems() {
   if (songList == NULL)
     return;
   for (songs *song = songList; song != NULL; song = song->next) {
-    song_items[n_songs++] = new_item(song->artist, song->title);
+    fprintf(log_file, "songList[%d] %s, %s, %s\n",n_songs, song->artist, song->title, song->path);
+    ITEM *n_item = new_item(song->artist, song->title);
+    if (n_item == NULL)
+      continue;
+    song_items[n_songs] = n_item;
+    // memcpy(song_items[n_songs], &n_item, sizeof(ITEM));
+    n_songs++;
   }
 }
 
@@ -32,6 +37,7 @@ int setupDir(char *dirPath) {
   ftw(dirPath, parseDirectory, 7);
   if (songList == NULL)
     return -1;
+  return 0;
 }
 
 songs *newSongNode(char *path) {
