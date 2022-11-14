@@ -32,6 +32,7 @@ void handle_winch(int sig);
 /* Teardown the audio engine */
 void cleanupMA();
 
+bool isPlaying();
 /* Teardown the ncurses ui */
 void cleanupUI();
 

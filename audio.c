@@ -42,6 +42,10 @@ void toggleSong() {
   ma_sound_is_playing(&sound) ? ma_sound_stop(&sound) : ma_sound_start(&sound);
 }
 
+bool isPlaying() {
+  return ma_sound_is_playing(&sound);
+}
+
 void restartSong() { ma_sound_seek_to_pcm_frame(&sound, 0); }
 
 int getSongTime() {
