@@ -77,6 +77,14 @@ void handleInput(int ch) {
     break;
   case ' ':
     toggleSong();
+    for (int i = 1; i < COLS - 1; i++) {
+      mvprintw(1, i, " ");
+    }
+    printMiddle(song_win, 1,
+                (COLS / 2) -
+                    (strlen(getCurrTitle(song_menu->curitem->index)) / 2),
+                strlen(getCurrTitle(song_menu->curitem->index)),
+                getCurrTitle(song_menu->curitem->index), 1);
     refresh();
     break;
   case 'p':

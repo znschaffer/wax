@@ -7,7 +7,7 @@ char *getCurrTitle(short index) {
                          song_items[index]->description.length + 3,
                      sizeof(char));
 
-  strcpy(str, "Now Playing: ");
+  strcpy(str, isPlaying() ? "Paused: " : "Now Playing: ");
   strcat(str, song_items[index]->name.str);
   strcat(str, " - ");
   strcat(str, song_items[index]->description.str);
