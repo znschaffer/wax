@@ -29,10 +29,6 @@ void loadSound(ITEM *item) {
   if (path == NULL)
     return;
 
-  // if (ma_sound_is_playing(&sound)) {
-  //   ma_sound_stop(&sound);
-  //   ma_sound_uninit(&sound);
-  // }
   ma_sound_uninit(&sound);
   ma_sound_init_from_file(&engine, path, 0, NULL, NULL, &sound);
   ma_sound_start(&sound);
