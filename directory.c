@@ -1,5 +1,4 @@
 #include "wax.h"
-#include <stdlib.h>
 
 songs *songList;
 TagLib_File *file;

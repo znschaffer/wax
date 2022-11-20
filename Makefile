@@ -15,4 +15,4 @@ $(BIN): $(OBJECTS)
 
 
 clean:
-	rm $(OBJECTS) $(BIN)
+	rm $(OBJECTS) $(BIN).o $(BIN)

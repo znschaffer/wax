@@ -1,7 +1,4 @@
-#include "ncurses.h"
 #include "wax.h"
-#include <stdlib.h>
-#include <string.h>
 
 ITEM **song_items;
 MENU *song_menu;
@@ -63,10 +60,6 @@ int setupUI() {
 
 void handleInput(int ch) {
   switch (ch) {
-  case KEY_RESIZE:
-    clear();
-    refresh();
-    break;
   case 'j':
   case KEY_DOWN:
     menu_driver(song_menu, REQ_DOWN_ITEM);

@@ -2,9 +2,9 @@
 #define WAX_H
 
 #include <ftw.h>
-#include <ncursesw/menu.h>
 #include <signal.h>
 #include <sys/ioctl.h>
+#include <ncursesw/menu.h>
 #include <ncursesw/ncurses.h>
 #include <stdio.h>
 #include <stdlib.h>

@@ -18,7 +18,7 @@ char *getCurrTitle(short index) {
 void printMiddle(WINDOW *win, int starty, int startx, int width, char *string,
                  chtype color) {
   int length, x, y;
-  float temp;
+  int temp;
 
   if (win == NULL)
     win = stdscr;
@@ -32,7 +32,7 @@ void printMiddle(WINDOW *win, int starty, int startx, int width, char *string,
 
   length = strlen(string);
   temp = (width - length) / 2;
-  x = startx + (int)temp;
+  x = startx + temp;
   wattron(win, color);
   mvwprintw(win, y, x, "%s", string);
   wattroff(win, color);
