@@ -28,6 +28,7 @@ songs *newSongNode(char *path);
 /* parse audiofile and return a songList with that file as the new head node */
 songs *parseAudioFile(songs *songList, char *path);
 
+int getSongDuration();
 void handle_winch(int sig);
 /* Teardown the audio engine */
 void cleanupMA();

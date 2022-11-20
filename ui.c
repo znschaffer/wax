@@ -52,7 +52,7 @@ int setupUI() {
   wrefresh(song_win);
 
   while ((ch = getch()) != KEY_F(1)) {
-    mvprintw(1, COLS - 4, "%d", getSongTime());
+    mvprintw(1, COLS - 7, "%d", getSongTime());
     handleInput(ch);
   }
   return 0;
@@ -89,8 +89,9 @@ void handleInput(int ch) {
                     (strlen(getCurrTitle(song_menu->curitem->index)) / 2),
                 strlen(getCurrTitle(song_menu->curitem->index)),
                 getCurrTitle(song_menu->curitem->index), 1);
-    refresh();
     loadSound(song_menu->curitem);
+    mvwprintw(song_win, 1, COLS - 4, "%d", getSongDuration());
+    refresh();
     break;
   }
   wrefresh(song_win);

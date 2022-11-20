@@ -26,6 +26,7 @@ void loadSound(ITEM *item) {
       if ((strcmp(item->name.str, song->artist) == 0))
         path = song->path;
   }
+
   if (path == NULL)
     return;
 
@@ -42,15 +43,21 @@ bool isPlaying() {
   return ma_sound_is_playing(&sound);
 }
 
+int getSongDuration() {
+  float length;
+  ma_sound_get_length_in_seconds(&sound, &length);
+  return (int)length;
+}
+
 void restartSong() { ma_sound_seek_to_pcm_frame(&sound, 0); }
 
 int getSongTime() {
-  ma_uint64 pCursor;
-  result = ma_sound_get_cursor_in_pcm_frames(&sound, &pCursor);
+  float pCursor;
+  result = ma_sound_get_cursor_in_seconds(&sound, &pCursor);
   if (result != MA_SUCCESS) {
     return 0;
   }
-  return (int)(pCursor / engine.sampleRate);
+  return (int)(pCursor);
 }
 
 void cleanupMA() {

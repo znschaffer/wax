@@ -34,8 +34,10 @@ void logSongList(void) {
 
 int setupDir(char *dirPath) {
   ftw(dirPath, parseDirectory, 7);
-  if (songList == NULL)
+  if (songList == NULL) {
+    fprintf(stdout, "%s", songList);
     return -1;
+  }
   return 0;
 }
 
