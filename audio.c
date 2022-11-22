@@ -6,6 +6,7 @@ ma_result result;
 ma_engine engine;
 ma_resource_manager rm;
 ma_sound sound;
+songs *currSong;
 
 int setupMA() {
   result = ma_engine_init(NULL, &engine);
@@ -20,18 +21,18 @@ int setupMA() {
 
 void loadSound(ITEM *item) {
   songs *song;
-  char *path;
   for (song = songList; NULL != song; song = song->next) {
     if ((strcmp(item->description.str, song->title) == 0))
-      if ((strcmp(item->name.str, song->artist) == 0))
-        path = song->path;
+      if ((strcmp(item->name.str, song->artist) == 0)) {
+        currSong = song;
+      }
   }
 
-  if (path == NULL)
+  if (currSong == NULL)
     return;
 
   ma_sound_uninit(&sound);
-  ma_sound_init_from_file(&engine, path, 0, NULL, NULL, &sound);
+  ma_sound_init_from_file(&engine, currSong->path, 0, NULL, NULL, &sound);
   ma_sound_start(&sound);
 }
 
@@ -41,6 +42,26 @@ void toggleSong() {
 
 bool isPlaying() {
   return ma_sound_is_playing(&sound);
+}
+
+void nextSong() {
+  if (currSong == NULL || currSong->next == NULL)
+    return;
+  currSong = currSong->next;
+  fprintf(log_file, "currSong = %s, currSong->prev = %s\n", currSong->title, currSong->prev->title);
+  ma_sound_uninit(&sound);
+  ma_sound_init_from_file(&engine, currSong->path, 0, NULL, NULL, &sound);
+  ma_sound_start(&sound);
+}
+
+void prevSong() {
+  if (currSong == NULL || NULL == currSong->prev)
+    return;
+  currSong = currSong->prev;
+  fprintf(log_file, "currSong = %s, currSong->next = %s\n", currSong->title, currSong->next->title);
+  ma_sound_uninit(&sound);
+  ma_sound_init_from_file(&engine, currSong->path, 0, NULL, NULL, &sound);
+  ma_sound_start(&sound);
 }
 
 int getSongDuration() {
