@@ -2,13 +2,13 @@
 #define WAX_H
 
 #include <ftw.h>
-#include <signal.h>
-#include <sys/ioctl.h>
 #include <ncursesw/menu.h>
 #include <ncursesw/ncurses.h>
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/ioctl.h>
 #include <taglib/tag_c.h>
 
 typedef struct song_file {
@@ -33,6 +33,17 @@ int getSongDuration();
 void handle_winch(int sig);
 /* Teardown the audio engine */
 void cleanupMA();
+
+typedef struct {
+  int hours;
+  int min;
+  int sec;
+  char timestring[20];
+} Time;
+
+Time convertToMins(int sec);
+
+void printTime(WINDOW *window, int rows, int cols, Time time);
 
 bool isPlaying();
 /* Teardown the ncurses ui */
