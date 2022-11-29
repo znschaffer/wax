@@ -1,3 +1,4 @@
+#include "ncurses.h"
 #include "wax.h"
 
 ITEM **song_items;
@@ -51,9 +52,9 @@ int setupUI() {
   post_menu(song_menu);
   wrefresh(song_win);
 
-  while ((ch = getch()) != 'q') {
+  while ('q' != (ch = getch())) {
     int currSecs = getSongTime();
-    mvprintw(1, COLS - 10, "%d:%d", (currSecs/60)%60, currSecs%60);
+    mvprintw(1, COLS - 10, "%d:%d", (currSecs / 60) % 60, currSecs % 60);
     handleInput(ch);
   }
   return 0;
@@ -70,6 +71,7 @@ void handleInput(int ch) {
     menu_driver(song_menu, REQ_UP_ITEM);
     break;
   case '>':
+  case KEY_RIGHT:
     menu_driver(song_menu, REQ_DOWN_ITEM);
     for (int i = 1; i < COLS - 1; i++) {
       mvprintw(1, i, " ");
@@ -80,9 +82,10 @@ void handleInput(int ch) {
                 strlen(getCurrTitle(song_menu->curitem->index)),
                 getCurrTitle(song_menu->curitem->index), 1);
     refresh();
-    nextSong();
+    playNextSong();
     break;
   case '<':
+  case KEY_LEFT:
     menu_driver(song_menu, REQ_UP_ITEM);
     for (int i = 1; i < COLS - 1; i++) {
       mvprintw(1, i, " ");
@@ -93,7 +96,7 @@ void handleInput(int ch) {
                 strlen(getCurrTitle(song_menu->curitem->index)),
                 getCurrTitle(song_menu->curitem->index), 1);
     refresh();
-    prevSong();
+    playPrevSong();
     break;
   case ' ':
     toggleSong();
@@ -118,7 +121,8 @@ void handleInput(int ch) {
                 getCurrTitle(song_menu->curitem->index), 1);
     loadSound(song_menu->curitem);
     int seconds = getSongDuration();
-    mvwprintw(song_win, 1, COLS - 5, "%d:%d", (seconds/60)%60, seconds%60);
+    mvwprintw(song_win, 1, COLS - 5, "%d:%d", (seconds / 60) % 60,
+              seconds % 60);
     refresh();
     break;
   }

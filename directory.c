@@ -5,19 +5,20 @@ TagLib_File *file;
 TagLib_Tag *tag;
 
 int parseDirectory(const char *path, const struct stat *sptr, int type) {
-  if (type == FTW_F && strstr(path, ".mp3")) {
+  if (FTW_F == type && strstr(path, ".mp3")) {
     insertSongNode(&songList, (char *)path);
   }
   return 0;
 }
 
 void populateSongItems() {
-  if (songList == NULL)
+  if (NULL == songList)
     return;
-  for (songs *song = songList; song != NULL; song = song->next) {
-    fprintf(log_file, "songList[%d] %s, %s, %s\n",n_songs, song->artist, song->title, song->path);
+  for (songs *song = songList; NULL != song; song = song->next) {
+    fprintf(log_file, "songList[%d] %s, %s, %s\n", n_songs, song->artist,
+            song->title, song->path);
     ITEM *n_item = new_item(song->artist, song->title);
-    if (n_item == NULL)
+    if (NULL == n_item)
       continue;
     song_items[n_songs] = n_item;
     // memcpy(song_items[n_songs], &n_item, sizeof(ITEM));
@@ -35,7 +36,7 @@ void logSongList(void) {
 int setupDir(char *dirPath) {
   songList = NULL;
   ftw(dirPath, parseDirectory, 7);
-  if (songList == NULL) {
+  if (NULL == songList) {
     return -1;
   }
   return 0;
@@ -51,7 +52,7 @@ void insertSongNode(songs **songList, char *path) {
     strcpy(newNode->album, taglib_tag_album(tag));
     strcpy(newNode->path, path);
     newNode->next = NULL;
-    if (*songList == NULL) {
+    if (NULL == *songList) {
       *songList = newNode;
       newNode->prev = NULL;
       return;
@@ -59,7 +60,7 @@ void insertSongNode(songs **songList, char *path) {
 
     songs *temp = *songList;
 
-    while(temp->next!=NULL)
+    while (NULL != temp->next)
       temp = temp->next;
 
     temp->next = newNode;
@@ -68,4 +69,3 @@ void insertSongNode(songs **songList, char *path) {
     taglib_file_free(file);
   }
 }
-

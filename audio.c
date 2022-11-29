@@ -11,7 +11,7 @@ songs *currSong;
 int setupMA() {
   result = ma_engine_init(NULL, &engine);
 
-  if (result != MA_SUCCESS) {
+  if (MA_SUCCESS != result) {
     cleanupMA();
     return -1;
   }
@@ -22,13 +22,13 @@ int setupMA() {
 void loadSound(ITEM *item) {
   songs *song;
   for (song = songList; NULL != song; song = song->next) {
-    if ((strcmp(item->description.str, song->title) == 0))
-      if ((strcmp(item->name.str, song->artist) == 0)) {
+    if (0 == (strcmp(item->description.str, song->title)))
+      if (0 == (strcmp(item->name.str, song->artist))) {
         currSong = song;
       }
   }
 
-  if (currSong == NULL)
+  if (NULL == currSong)
     return;
 
   ma_sound_uninit(&sound);
@@ -40,25 +40,25 @@ void toggleSong() {
   ma_sound_is_playing(&sound) ? ma_sound_stop(&sound) : ma_sound_start(&sound);
 }
 
-bool isPlaying() {
-  return ma_sound_is_playing(&sound);
-}
+bool isPlaying() { return ma_sound_is_playing(&sound); }
 
-void nextSong() {
-  if (currSong == NULL || currSong->next == NULL)
+void playNextSong() {
+  if (NULL == currSong || NULL == currSong->next)
     return;
   currSong = currSong->next;
-  fprintf(log_file, "currSong = %s, currSong->prev = %s\n", currSong->title, currSong->prev->title);
+  fprintf(log_file, "currSong = %s, currSong->prev = %s\n", currSong->title,
+          currSong->prev->title);
   ma_sound_uninit(&sound);
   ma_sound_init_from_file(&engine, currSong->path, 0, NULL, NULL, &sound);
   ma_sound_start(&sound);
 }
 
-void prevSong() {
-  if (currSong == NULL || NULL == currSong->prev)
+void playPrevSong() {
+  if (NULL == currSong || NULL == currSong->prev)
     return;
   currSong = currSong->prev;
-  fprintf(log_file, "currSong = %s, currSong->next = %s\n", currSong->title, currSong->next->title);
+  fprintf(log_file, "currSong = %s, currSong->next = %s\n", currSong->title,
+          currSong->next->title);
   ma_sound_uninit(&sound);
   ma_sound_init_from_file(&engine, currSong->path, 0, NULL, NULL, &sound);
   ma_sound_start(&sound);
@@ -75,7 +75,7 @@ void restartSong() { ma_sound_seek_to_pcm_frame(&sound, 0); }
 int getSongTime() {
   float pCursor;
   result = ma_sound_get_cursor_in_seconds(&sound, &pCursor);
-  if (result != MA_SUCCESS) {
+  if (MA_SUCCESS != result) {
     return 0;
   }
   return (int)(pCursor);

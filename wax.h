@@ -42,8 +42,8 @@ int setupDir(char *dirPath);
 /* Load song into engine and play it, stopping any currently playing song */
 void loadSound(ITEM *item);
 
-void nextSong();
-void prevSong();
+void playNextSong();
+void playPrevSong();
 
 int getSongTime();
 

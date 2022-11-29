@@ -20,14 +20,14 @@ void printMiddle(WINDOW *win, int starty, int startx, int width, char *string,
   int length, x, y;
   int temp;
 
-  if (win == NULL)
+  if (NULL == win)
     win = stdscr;
   getyx(win, y, x);
-  if (startx != 0)
+  if (0 != startx)
     x = startx;
-  if (starty != 0)
+  if (0 != starty)
     y = starty;
-  if (width == 0)
+  if (0 == width)
     width = 80;
 
   length = strlen(string);
