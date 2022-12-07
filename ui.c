@@ -49,8 +49,9 @@ void drawWindow() {
 
   drawDefaultTitle();
   mvwhline(song_win, 2, 1, ACS_HLINE, COLS - 2);
-  mvwhline(song_win, LINES - 10, 1, ACS_HLINE, COLS - 2);
-  mvwvline(song_win, LINES - 9, COLS - COLS / 4, ACS_VLINE, 8);
+  mvwhline(song_win, LINES - 6, 1, ACS_HLINE, COLS - 2);
+  printTime(song_win, LINES - 4, COLS - 8, convertToMins(SONG_DUR));
+
   refresh();
   post_menu(song_menu);
   wrefresh(song_win);
@@ -59,11 +60,11 @@ void drawWindow() {
 /** Song Curr Time / Full Length*/
 
 void printSongDuration() {
-  printTime(song_win, 1, COLS - 10, convertToMins(getSongDuration()));
+  printTime(song_win, LINES - 4, COLS - 8, convertToMins(SONG_DUR));
 }
 
 void printCurrTime() {
-  printTime(song_win, 1, COLS - 16, convertToMins(getSongTime()));
+  printTime(song_win, LINES - 4, 2, convertToMins(SONG_CURRTIME));
 }
 
 /* Refreshing Title*/
@@ -85,6 +86,9 @@ void redrawTitle() {
   refresh();
 }
 
+void setSongTime() { SONG_CURRTIME = getSongTime(); }
+void setSongDur() { SONG_DUR = getSongDuration(); }
+
 /* Executing Functions*/
 
 int setupUI() {
@@ -100,7 +104,11 @@ int setupUI() {
   /* Draw Window UI*/
   drawWindow();
   while ((ch = getch()) != KEY_F(1)) {
+    setSongTime();
     printCurrTime();
+
+    drawTicker(song_win);
+
     handleInput(ch);
   }
   return 0;
@@ -120,12 +128,14 @@ void handleInput(int ch) {
   case KEY_RIGHT:
     playNextSong();
     menu_driver(song_menu, REQ_DOWN_ITEM);
+    setSongDur();
     redrawTitle();
     break;
   case '<':
   case KEY_LEFT:
     playPrevSong();
     menu_driver(song_menu, REQ_UP_ITEM);
+    setSongDur();
     redrawTitle();
     break;
   case ' ':
@@ -135,6 +145,7 @@ void handleInput(int ch) {
     break;
   case 'p':
     loadSound(song_menu->curitem);
+    setSongDur();
     redrawTitle();
     refresh();
     break;

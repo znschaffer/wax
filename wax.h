@@ -56,6 +56,8 @@ void loadSound(ITEM *item);
 void playNextSong();
 void playPrevSong();
 
+int SONG_CURRTIME = 0;
+int SONG_DUR = 0;
 int getSongTime();
 
 void toggleSong();
@@ -79,6 +81,10 @@ int setupMA();
 
 /* Switch case for handling user inputs */
 void handleInput(int c);
+
+void drawTicker(WINDOW *win);
+
+bool soundInitialized;
 
 /* Bootstraps ncurses menu with all the song names from loadSongs */
 int setupUI();
