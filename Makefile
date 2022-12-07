@@ -1,5 +1,5 @@
 BIN = wax
-CFLAGS=-g -Wall  $(shell pkg-config --cflags menu ncurses taglib_c)
+CFLAGS=-g -Wall $(shell pkg-config --cflags menu ncurses taglib_c)
 LDFLAGS= $(shell pkg-config --libs menu ncurses taglib_c)
 
 SOURCES = $(wildcard *.c)
