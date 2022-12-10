@@ -20,12 +20,31 @@ typedef struct song_file {
   struct song_file *next;
 } songs;
 
+typedef struct directory_ {
+  char cwd[1000];
+  char *parent_dir;
+  char *files[];
+} directory_t;
+
+typedef struct song {
+  char path[300];
+  char artist[200];
+  char title[200];
+  char album[200];
+} song;
+
+typedef struct library_ {
+  int num;
+  song *songs[];
+} library_t;
+extern library_t *Library;
 extern songs *songList;
 extern struct sigaction sa;
 extern FILE *log_file;
 
 songs *newSongNode(char *path);
 
+bool checkIfSongFinished();
 /* parse audiofile and return a songList with that file as the new head node */
 
 void insertSongNode(songs **songList, char *path);

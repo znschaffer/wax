@@ -48,15 +48,32 @@ int setupUI() {
   mvwhline(song_win, 2, 1, ACS_HLINE, COLS - 2);
   mvwhline(song_win, LINES - 10, 1, ACS_HLINE, COLS - 2);
   mvwvline(song_win, LINES - 9, COLS - COLS / 4, ACS_VLINE, 8);
+
   refresh();
+
   post_menu(song_menu);
   wrefresh(song_win);
 
   while ('q' != (ch = getch())) {
     int currSecs = getSongTime();
+    if (checkIfSongFinished()) {
+      menu_driver(song_menu, REQ_DOWN_ITEM);
+      for (int i = 1; i < COLS - 1; i++) {
+        mvprintw(1, i, " ");
+      }
+      printMiddle(song_win, 1,
+                  (COLS / 2) -
+                      (strlen(getCurrTitle(song_menu->curitem->index)) / 2),
+                  strlen(getCurrTitle(song_menu->curitem->index)),
+                  getCurrTitle(song_menu->curitem->index), 1);
+
+      refresh();
+      playNextSong();
+    }
     mvprintw(1, COLS - 10, "%d:%d", (currSecs / 60) % 60, currSecs % 60);
     handleInput(ch);
   }
+
   return 0;
 }
 

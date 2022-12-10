@@ -7,6 +7,7 @@ ma_engine engine;
 ma_resource_manager rm;
 ma_sound sound;
 songs *currSong;
+bool soundInitialized;
 
 int setupMA() {
   result = ma_engine_init(NULL, &engine);
@@ -34,6 +35,7 @@ void loadSound(ITEM *item) {
   ma_sound_uninit(&sound);
   ma_sound_init_from_file(&engine, currSong->path, 0, NULL, NULL, &sound);
   ma_sound_start(&sound);
+  soundInitialized = true;
 }
 
 void toggleSong() {
@@ -51,6 +53,13 @@ void playNextSong() {
   ma_sound_uninit(&sound);
   ma_sound_init_from_file(&engine, currSong->path, 0, NULL, NULL, &sound);
   ma_sound_start(&sound);
+}
+
+bool checkIfSongFinished() {
+  if (ma_sound_at_end(&sound)) {
+    return true;
+  }
+  return false;
 }
 
 void playPrevSong() {
