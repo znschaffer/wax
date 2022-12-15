@@ -11,14 +11,6 @@
 #include <string.h>
 #include <taglib/tag_c.h>
 
-typedef struct song_file {
-  char path[300];
-  char artist[200];
-  char title[200];
-  char album[200];
-  struct song_file *prev;
-  struct song_file *next;
-} songs;
 
 typedef struct directory_ {
   char cwd[1000];
@@ -31,23 +23,21 @@ typedef struct song {
   char artist[200];
   char title[200];
   char album[200];
+  int index;
 } song;
 
 typedef struct library_ {
   int num;
-  song *songs[];
+  song **songs;
 } library_t;
 extern library_t *Library;
-extern songs *songList;
 extern struct sigaction sa;
 extern FILE *log_file;
 
-songs *newSongNode(char *path);
 
 bool checkIfSongFinished();
 /* parse audiofile and return a songList with that file as the new head node */
 
-void insertSongNode(songs **songList, char *path);
 int getSongDuration();
 void handle_winch(int sig);
 /* Teardown the audio engine */
@@ -107,7 +97,7 @@ void printMiddle(WINDOW *win, int starty, int startx, int width, char *string,
 char *getCurrTitle(short);
 
 /** Logging */
-void logSongList(void);
+void logLibrary(void);
 
 /* Number of songs we know about */
 extern int n_songs;
