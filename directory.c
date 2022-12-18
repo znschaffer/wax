@@ -11,27 +11,30 @@ int selection, maxx, maxy, len = 0, start = 0;
 size_t total_files = 0;
 library_t *Library;
 directory_t *current_directory_ = NULL;
-int get_files(char *directory, char *target[]) {
-  int i = 0;
-  DIR *dir_;
-  struct dirent *dir_entry;
-  dir_ = opendir(directory);
-  if (NULL == dir_) {
-    return -1;
-  }
 
-  while ((dir_entry = readdir(dir_)) != NULL) {
-    if ((strcmp(dir_entry->d_name, ".") != 0)) {
-      char path[1000];
-      strcpy(path, directory);
-      strcat(path, dir_entry->d_name);
-      
-      fprintf(log_file, "d_name=%s, rpath=%s", dir_entry->d_name, path);
-      target[i++] = strdup(path);
+void get_files(int *len, char *basePath, char *target[]) {
+  char path[1000];
+  struct dirent *d_ent;
+  DIR *dir = opendir(basePath);
+
+  if (!dir)
+    return;
+
+  while ((d_ent = readdir(dir)) != NULL) {
+    if (strcmp(d_ent->d_name, ".") != 0 && strcmp(d_ent->d_name, "..") != 0) {
+      fprintf(log_file, "%s\n", d_ent->d_name);
+
+      strcpy(path, basePath);
+      strcat(path, "/");
+      strcat(path, d_ent->d_name);
+
+      get_files(len, path, target);
+      target[*len] = strdup(path);
+      *len += 1;
     }
   }
-  closedir(dir_);
-  return 1;
+
+  closedir(dir);
 }
 
 void populateSongItems() {
@@ -54,36 +57,6 @@ void logLibrary(void) {
   }
 }
 
-int get_no_files_in_directory(char *directory) {
-  int len = 0;
-  DIR *dir_;
-  struct dirent *dir_entry;
-
-  dir_ = opendir(directory);
-  if (dir_ == NULL) {
-    return -1;
-  }
-
-  while ((dir_entry = readdir(dir_)) != NULL) {
-    // Skip .
-    if (strcmp(dir_entry->d_name, ".") != 0) {
-      len++;
-    }
-  }
-  closedir(dir_);
-  return len;
-}
-
-char *get_parent_directory(char *cwd) {
-  char *a;
-  a = strdup(cwd);
-  int i = strlen(a) - 1;
-  while (a[--i] != '/')
-    ;
-  a[++i] = '\0';
-  return a;
-}
-
 int setupDir(char *dirPath) {
   Library = calloc(0, sizeof(*Library));
   Library->num = 0;
@@ -97,15 +70,14 @@ int setupDir(char *dirPath) {
 
   getcwd(current_directory_->cwd, sizeof(current_directory_->cwd));
   strcat(current_directory_->cwd, "/");
-  current_directory_->parent_dir =
-      strdup(get_parent_directory(current_directory_->cwd));
-  len = get_no_files_in_directory(dirPath);
-  char *files[len];
-  get_files(dirPath, files);
-  Library->songs = calloc(100, sizeof(song *));
+  strcat(current_directory_->cwd, dirPath);
+
+  char *files[200];
+  get_files(&len, dirPath, files);
+  Library->songs = calloc(len, sizeof(song *));
 
   for (int i = start; i < len; i++) {
-    if (strstr(files[i], ".mp3")) {
+    if (strstr(files[i], ".mp3") || strstr(files[i], ".wav")) {
       int currNum = Library->num;
       Library->songs[currNum] = calloc(1, sizeof(song));
       file = taglib_file_new(files[i]);
@@ -124,49 +96,9 @@ int setupDir(char *dirPath) {
       strcpy(Library->songs[currNum]->path, files[i]);
       Library->songs[currNum]->index = currNum;
       Library->num++;
-      // insertSongNode(&songList, files[i]);
     }
   }
 
   logLibrary();
   return 0;
 }
-
-/* void insertSongNode(songs **songList, char *path) {
-  songs *newNode = malloc(sizeof(songs));
-  if (NULL != newNode) {
-    file = taglib_file_new(path);
-    tag = taglib_file_tag(file);
-    char *title = taglib_tag_title(tag);
-    if (strcmp(title, "") == 0) {
-      title = basename(path);
-    }
-    char *artist = taglib_tag_artist(tag);
-    if (strcmp(artist, "") == 0) {
-      artist = "--";
-    }
-
-    fprintf(log_file, "title: %s, artist: %s\n", title, artist);
-
-    strcpy(newNode->artist, artist);
-    strcpy(newNode->title, title);
-    strcpy(newNode->album, taglib_tag_album(tag));
-    strcpy(newNode->path, path);
-    newNode->next = NULL;
-    if (NULL == *songList) {
-      *songList = newNode;
-      newNode->prev = NULL;
-      return;
-    }
-
-    songs *temp = *songList;
-
-    while (NULL != temp->next)
-      temp = temp->next;
-
-    temp->next = newNode;
-    newNode->prev = temp;
-    taglib_tag_free_strings();
-    taglib_file_free(file);
-  }
-} */

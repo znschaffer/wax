@@ -32,7 +32,6 @@ void loadSound(ITEM *item) {
   if (NULL == currSong)
     return;
 
-  // fprintf(log_file, "loadSound -- currSong->path = %s\n", currSong->path);
   ma_sound_uninit(&sound);
   ma_sound_init_from_file(&engine, currSong->path, 0, NULL, NULL, &sound);
   ma_sound_start(&sound);

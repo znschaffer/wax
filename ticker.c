@@ -3,9 +3,9 @@
 
 int SONG_CURRTIME = 0;
 int SONG_DUR = 0;
-int TICKER_START = 8; 
+int TICKER_START = 8;
 int TICKER_END;
-int TICKER_HEIGHT; 
+int TICKER_HEIGHT;
 int TICKER_LENGTH;
 
 float percentPlayed() {

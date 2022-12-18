@@ -23,11 +23,6 @@ void logSongItems(void) {
 }
 
 void initWindow() {
-  // int ch;
-  // setupCurses();
-  // setupColors();
-  // song_items = (ITEM **)calloc(400, sizeof(ITEM *));
-  // populateSongItems();
   song_menu = new_menu((ITEM **)song_items);
 
   /* Init windows */
@@ -41,25 +36,22 @@ void initWindow() {
 }
 
 void drawDefaultTitle() {
-    printMiddle(song_win, 1, (COLS / 2) - (strlen(title) / 2), strlen(title),
+  printMiddle(song_win, 1, (COLS / 2) - (strlen(title) / 2), strlen(title),
               title, 1);
 }
-void drawWindow() {
 
-  /* Print a border around the main window and print a title */
+void drawWindow() {
   box(song_win, 0, 0);
   title = "wax";
   drawDefaultTitle();
   mvwhline(song_win, 2, 1, ACS_HLINE, COLS - 2);
-    mvwhline(song_win, LINES - 6, 1, ACS_HLINE, COLS - 2);
+  mvwhline(song_win, LINES - 6, 1, ACS_HLINE, COLS - 2);
   printTime(song_win, LINES - 4, COLS - 8, convertToMins(SONG_DUR));
 
   refresh();
   post_menu(song_menu);
   wrefresh(song_win);
-
 }
-
 
 void printSongDuration() {
   printTime(song_win, LINES - 4, COLS - 8, convertToMins(SONG_DUR));
@@ -70,7 +62,6 @@ void printCurrTime() {
 }
 
 /* Refreshing Title*/
-
 void redrawBlank() {
   for (int i = 1; i < COLS - 1; i++) {
     mvwprintw(song_win, 1, i, " ");
@@ -103,11 +94,10 @@ int setupUI() {
   /* Draw Window UI*/
   drawWindow();
   while ('q' != (ch = getch())) {
-      setSongTime();
-      printCurrTime();
+    setSongTime();
+    printCurrTime();
 
-      drawTicker(song_win);
-
+    drawTicker(song_win);
 
     // if (checkIfSongFinished()) {
     //   menu_driver(song_menu, REQ_DOWN_ITEM);
@@ -169,7 +159,7 @@ void handleInput(int ch) {
     //             getCurrTitle(song_menu->curitem->index), 1);
     // refresh();
     playPrevSong();
-        menu_driver(song_menu, REQ_UP_ITEM);
+    menu_driver(song_menu, REQ_UP_ITEM);
     setSongDur();
     redrawTitle();
     break;
@@ -183,7 +173,7 @@ void handleInput(int ch) {
     //                 (strlen(getCurrTitle(song_menu->curitem->index)) / 2),
     //             strlen(getCurrTitle(song_menu->curitem->index)),
     //             getCurrTitle(song_menu->curitem->index), 1);
-    //             
+    //
     redrawTitle();
     refresh();
     break;

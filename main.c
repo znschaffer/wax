@@ -9,20 +9,20 @@ int main(int argc, char **argv) {
   log_file = fopen("wax.log", "a+");
   ret = setupDir(argv[1]);
   if (0 != ret) {
-    fprintf(stderr, "failed to load directory %s", argv[1]);
+    // fprintf(stderr, "failed to load directory %s", argv[1]);
     fclose(log_file);
     return -1;
   }
   ret = setupMA();
   if (0 != ret) {
-    fprintf(stderr, "failed to load audio engine");
+    // fprintf(stderr, "failed to load audio engine");
     fclose(log_file);
     return -1;
   }
 
   ret = setupUI();
   if (0 != ret) {
-    fprintf(stderr, "failed to load ncurses UI");
+    // fprintf(stderr, "failed to load ncurses UI");
     fclose(log_file);
     return -1;
   }

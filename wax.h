@@ -2,13 +2,13 @@
 #define WAX_H
 
 #include <ftw.h>
-#include <signal.h>
-#include <sys/ioctl.h>
 #include <ncursesw/menu.h>
 #include <ncursesw/ncurses.h>
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/ioctl.h>
 #include <taglib/tag_c.h>
 
 typedef struct {
@@ -22,15 +22,12 @@ Time convertToMins(int sec);
 
 void printTime(WINDOW *window, int rows, int cols, Time time);
 
-
 extern bool soundInitialized;
 extern int SONG_CURRTIME;
 extern int SONG_DUR;
 
-
 void drawTicker(WINDOW *win);
 
-bool soundInitialized;
 typedef struct directory_ {
   char cwd[1000];
   char *parent_dir;
@@ -53,8 +50,9 @@ extern library_t *Library;
 extern struct sigaction sa;
 extern FILE *log_file;
 
-
+bool soundInitialized;
 bool checkIfSongFinished();
+
 /* parse audiofile and return a songList with that file as the new head node */
 
 int getSongDuration();
@@ -67,10 +65,14 @@ bool isPlaying();
 void cleanupUI();
 
 int setupDir(char *dirPath);
+
 /* Load song into engine and play it, stopping any currently playing song */
 void loadSound(ITEM *item);
 
+/* Queue up next song */
 void playNextSong();
+
+/* Queue up prev song */
 void playPrevSong();
 
 int getSongTime();
