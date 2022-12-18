@@ -1,5 +1,8 @@
 #include "wax.h"
 
+int SONG_CURRTIME = 0;
+int SONG_DUR = 0;
+
 Time convertToMins(int sec) {
   int h, m, s;
 

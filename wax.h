@@ -56,8 +56,8 @@ void loadSound(ITEM *item);
 void playNextSong();
 void playPrevSong();
 
-int SONG_CURRTIME = 0;
-int SONG_DUR = 0;
+extern int SONG_CURRTIME;
+extern int SONG_DUR;
 int getSongTime();
 
 void toggleSong();
