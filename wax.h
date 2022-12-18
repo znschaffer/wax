@@ -11,7 +11,26 @@
 #include <string.h>
 #include <taglib/tag_c.h>
 
+typedef struct {
+  int hours;
+  int min;
+  int sec;
+  char timestring[20];
+} Time;
 
+Time convertToMins(int sec);
+
+void printTime(WINDOW *window, int rows, int cols, Time time);
+
+
+extern bool soundInitialized;
+extern int SONG_CURRTIME;
+extern int SONG_DUR;
+
+
+void drawTicker(WINDOW *win);
+
+bool soundInitialized;
 typedef struct directory_ {
   char cwd[1000];
   char *parent_dir;
@@ -80,6 +99,7 @@ void handleInput(int c);
 
 /* Bootstraps ncurses menu with all the song names from loadSongs */
 int setupUI();
+void initWindow();
 
 /* Array of (ITEM *)songs */
 extern ITEM **song_items;
