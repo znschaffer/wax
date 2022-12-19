@@ -105,6 +105,8 @@ void populateAlbumItems(char *artist) {
 }
 
 void populateSongItems(char *artist, char *album) {
+  memset(song_items, 0, n_songs * sizeof(ITEM *));
+  n_songs = 0;
   if (NULL == Library->songs[0])
     return;
   for (int i = 0; i < Library->num; i++) {
