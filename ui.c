@@ -20,45 +20,7 @@ int n_songs = 0;
 int n_albums = 0;
 int n_artists = 0;
 
-void setupCurses() {
-  initscr();
-  cbreak();
-  noecho();
-  setupColors();
-  keypad(stdscr, TRUE);
-  nodelay(stdscr, TRUE);
-  curs_set(0);
-}
-
-void attachMenu(MENU *menu, WINDOW *win) {
-  set_menu_win(menu, win);
-  set_menu_sub(menu, derwin(win, LINES - 20, (COLS / 3) - 3, 2, 2));
-  set_menu_format(menu, 20, 1);
-  set_menu_mark(menu, " > ");
-}
-
-void initWindow() {
-  song_menu = new_menu((ITEM **)song_items);
-  artist_menu = new_menu((ITEM **)artist_items);
-  album_menu = new_menu((ITEM **)album_items);
-
-  /* Init windows */
-  window = newwin(0, 0, 0, 0);
-  artist_win = newwin(LINES - 9, (COLS / 3) - 1, 3, 1);            // 1
-  album_win = newwin(LINES - 9, (COLS / 3) - 1, 3, COLS / 3);      // 2
-  song_win = newwin(LINES - 9, (COLS / 3), 3, (2 * COLS / 3) - 1); // 3
-
-  attachMenu(song_menu, song_win);
-  attachMenu(artist_menu, artist_win);
-  attachMenu(album_menu, album_win);
-
-  keypad(album_win, TRUE);
-}
-
-void drawDefaultTitle() {
-  printMiddle(window, 1, (COLS / 2) - (strlen(title) / 2), strlen(title), title,
-              COLOR_PAIR(1));
-}
+// Logging
 
 void logSongItems(void) {
   for (int i = 0; i < n_songs; i++) {
@@ -78,18 +40,62 @@ void logArtistItems() {
   }
 }
 
+// Init CURSES
+void setupCurses() {
+  initscr();
+  cbreak();
+  noecho();
+  setupColors();
+  keypad(stdscr, TRUE);
+  nodelay(stdscr, TRUE);
+  curs_set(0);
+}
+
+void attachMenu(MENU *menu, WINDOW *win) {
+  set_menu_win(menu, win);
+  set_menu_sub(menu, derwin(win, LINES - 20, (COLS / 3) - 3, 2, 2));
+  set_menu_format(menu, 20, 1);
+  set_menu_mark(menu, " > ");
+}
+
+// Setup all windows and menus
+void initWindow() {
+  song_menu = new_menu((ITEM **)song_items);
+  artist_menu = new_menu((ITEM **)artist_items);
+  album_menu = new_menu((ITEM **)album_items);
+
+  /* Init windows */
+  window = newwin(0, 0, 0, 0);
+  artist_win = newwin(LINES - 12, (COLS / 3) - 1, 3, 1);            // 1
+  album_win = newwin(LINES - 12, (COLS / 3) - 1, 3, COLS / 3);      // 2
+  song_win = newwin(LINES - 12, (COLS / 3), 3, (2 * COLS / 3) - 1); // 3
+
+  attachMenu(song_menu, song_win);
+  attachMenu(artist_menu, artist_win);
+  attachMenu(album_menu, album_win);
+
+  keypad(album_win, TRUE);
+}
+
+void drawDefaultTitle() {
+  printMiddle(window, 1, (COLS / 2) - (strlen(title) / 2), strlen(title), title,
+              COLOR_PAIR(1));
+}
+
+// Basic UI and outlines for outer window
 void drawWindow() {
   box(window, 0, 0);
   title = "wax";
   drawDefaultTitle();
   mvwhline(window, 2, 1, ACS_HLINE, COLS - 2);
-  mvwhline(window, LINES - 6, 1, ACS_HLINE, COLS - 2);
+  mvwhline(window, LINES - 9, 1, ACS_HLINE, COLS - 2);
   printTime(window, LINES - 4, COLS - 8, convertToMins(SONG_DUR),
             COLOR_PAIR(2));
   refresh();
   wrefresh(window);
 }
 
+// Basic UI for menus
 void drawMenus() {
   box(song_win, 0, 0);
   box(artist_win, 0, 0);
@@ -105,24 +111,23 @@ void drawMenus() {
 }
 
 void printSongDuration() {
-  printTime(window, LINES - 4, COLS - 8, convertToMins(SONG_DUR),
-            COLOR_PAIR(2));
+  printTime(NULL, LINES - 4, COLS - 8, convertToMins(SONG_DUR), COLOR_PAIR(2));
 }
 
 void printCurrTime() {
-  printTime(window, LINES - 4, 2, convertToMins(SONG_CURRTIME), COLOR_PAIR(2));
+  printTime(NULL, LINES - 4, 2, convertToMins(SONG_CURRTIME), COLOR_PAIR(2));
 }
 
 /* Refreshing Title*/
 void redrawBlank() {
-  for (int i = 1; i < COLS - 1; i++) {
-    mvwprintw(song_win, 1, i, " ");
+  for (int i = 1; i < COLS - 2; i++) {
+    mvprintw(1, i, " ");
   }
 }
 
 void redrawTitle() {
   redrawBlank();
-  printMiddle(song_win, 1,
+  printMiddle(NULL, 0,
               (COLS / 2) -
                   (strlen(getCurrTitle(song_menu->curitem->index)) / 2),
               strlen(getCurrTitle(song_menu->curitem->index)),
@@ -162,7 +167,7 @@ int setupUI() {
     setSongTime();
     printCurrTime();
 
-    drawTicker(window);
+    drawTicker();
     handleInput(ch);
   }
 

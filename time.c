@@ -27,6 +27,10 @@ Time convertToMins(int sec) {
 }
 
 void printTime(WINDOW *window, int rows, int cols, Time time, chtype color) {
+
+  if (NULL == window) {
+    window = stdscr;
+  }
   wattron(window, color);
   mvwprintw(window, rows, cols, "%s", time.timestring);
   wattroff(window, color);
