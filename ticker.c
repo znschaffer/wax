@@ -21,7 +21,7 @@ void drawTime(WINDOW *win) {}
 
 void drawTicker(WINDOW *win) {
   TICKER_END = COLS - 17;
-  TICKER_HEIGHT = LINES - 4;
+  TICKER_HEIGHT = LINES - 3;
   TICKER_LENGTH = TICKER_END - TICKER_START;
 
   mvwhline(win, TICKER_HEIGHT, TICKER_START, ACS_VLINE, TICKER_END);
