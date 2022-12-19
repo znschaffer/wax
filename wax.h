@@ -20,7 +20,7 @@ typedef struct {
 
 Time convertToMins(int sec);
 
-void printTime(WINDOW *window, int rows, int cols, Time time);
+void printTime(WINDOW *window, int rows, int cols, Time time, chtype color);
 
 extern bool soundInitialized;
 extern int SONG_CURRTIME;

@@ -26,8 +26,10 @@ Time convertToMins(int sec) {
   return convertedTime;
 }
 
-void printTime(WINDOW *window, int rows, int cols, Time time) {
+void printTime(WINDOW *window, int rows, int cols, Time time, chtype color) {
+  wattron(window, color);
   mvwprintw(window, rows, cols, "%s", time.timestring);
+  wattroff(window, color);
 
   refresh();
 }
