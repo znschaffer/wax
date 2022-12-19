@@ -1,3 +1,4 @@
+#include "menu.h"
 #include "ncurses.h"
 #include "wax.h"
 
@@ -19,6 +20,9 @@ char *currAlbum;
 int n_songs = 0;
 int n_albums = 0;
 int n_artists = 0;
+
+MENU *curr_menu;
+WINDOW *curr_window;
 
 void setupCurses() {
   initscr();
@@ -158,6 +162,9 @@ int setupUI() {
   /* Draw Menu UI */
   drawMenus();
 
+  curr_window = song_win;
+  curr_menu = song_menu;
+
   while ('q' != (ch = getch())) {
     setSongTime();
     printCurrTime();
@@ -171,25 +178,37 @@ int setupUI() {
 
 void handleInput(int ch) {
   switch (ch) {
+  case 'a':
+    curr_menu = artist_menu;
+    curr_window = artist_win;
+    break;
+  case 's':
+    curr_menu = album_menu;
+    curr_window = album_win;
+    break;
+  case 'd':
+    curr_menu = song_menu;
+    curr_window = song_win;
+    break;
   case 'j':
   case KEY_DOWN:
-    menu_driver(song_menu, REQ_DOWN_ITEM);
+    menu_driver(curr_menu, REQ_DOWN_ITEM);
     break;
   case 'k':
   case KEY_UP:
-    menu_driver(song_menu, REQ_UP_ITEM);
+    menu_driver(curr_menu, REQ_UP_ITEM);
     break;
   case '>':
   case KEY_RIGHT:
     playNextSong();
-    menu_driver(song_menu, REQ_DOWN_ITEM);
+    menu_driver(curr_menu, REQ_DOWN_ITEM);
     setSongDur();
     redrawTitle();
     break;
   case '<':
   case KEY_LEFT:
     playPrevSong();
-    menu_driver(song_menu, REQ_UP_ITEM);
+    menu_driver(curr_menu, REQ_UP_ITEM);
     setSongDur();
     redrawTitle();
     break;
@@ -198,14 +217,36 @@ void handleInput(int ch) {
     redrawTitle();
     refresh();
     break;
-  case 'p':
-    loadSound(song_menu->curitem);
-    setSongDur();
-    redrawTitle();
+  case 10:
+    if (curr_menu == song_menu) {
+      loadSound(curr_menu->curitem);
+      setSongDur();
+      redrawTitle();
+
+    } else if (curr_menu == album_menu) {
+      currAlbum = curr_menu->curitem->name.str;
+      populateSongItems(currArtist, currAlbum);
+      set_menu_items(song_menu, song_items);
+
+      wrefresh(song_win);
+      wrefresh(album_win);
+      wrefresh(artist_win);
+
+    } else if (curr_menu == artist_menu) {
+      currArtist = curr_menu->curitem->name.str;
+      populateAlbumItems(currArtist);
+      set_menu_items(album_menu, album_items);
+      populateSongItems(currArtist, currAlbum);
+      set_menu_items(song_menu, song_items);
+
+      wrefresh(song_win);
+      wrefresh(album_win);
+    }
+
     refresh();
     break;
   }
-  wrefresh(song_win);
+  wrefresh(curr_window);
 }
 
 void cleanupUI() { endwin(); }
