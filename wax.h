@@ -26,7 +26,7 @@ extern bool soundInitialized;
 extern int SONG_CURRTIME;
 extern int SONG_DUR;
 
-void drawTicker(WINDOW *win);
+void drawTicker();
 
 typedef struct directory_ {
   char cwd[1000];
@@ -120,6 +120,8 @@ extern char *currArtist;
 
 /* Menu list holding songs */
 extern MENU *song_menu;
+extern MENU *artist_menu;
+extern MENU *album_menu;
 
 /** Colors */
 void setupColors();
