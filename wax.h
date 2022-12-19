@@ -42,6 +42,11 @@ typedef struct song {
   int index;
 } song;
 
+typedef struct albumlist {
+  int num;
+  char **albums;
+} albumlist;
+
 typedef struct library_ {
   int num;
   song **songs;
@@ -88,7 +93,9 @@ int addSongsToList(const char *path, const struct stat *sptr, int type);
 void loadDirectory(char *dirPath);
 
 /* Loads every file in file_paths as an *ITEM in songs */
-void populateSongItems();
+void populateSongItems(char *artist, char *album);
+void populateAlbumItems(char *artist);
+void populateArtistItems();
 
 /* Basic ncurses setup code */
 void setupCurses();
@@ -105,6 +112,11 @@ void initWindow();
 
 /* Array of (ITEM *)songs */
 extern ITEM **song_items;
+extern ITEM **album_items;
+extern ITEM **artist_items;
+
+extern char *currAlbum;
+extern char *currArtist;
 
 /* Menu list holding songs */
 extern MENU *song_menu;
@@ -123,5 +135,7 @@ void logLibrary(void);
 
 /* Number of songs we know about */
 extern int n_songs;
+extern int n_albums;
+extern int n_artists;
 
 #endif // !WAX_HEADER
