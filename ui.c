@@ -11,6 +11,7 @@ void setupCurses() {
   initscr();
   cbreak();
   noecho();
+  setupColors();
   keypad(stdscr, TRUE);
   nodelay(stdscr, TRUE);
   curs_set(0);
@@ -37,7 +38,7 @@ void initWindow() {
 
 void drawDefaultTitle() {
   printMiddle(song_win, 1, (COLS / 2) - (strlen(title) / 2), strlen(title),
-              title, 1);
+              title, COLOR_PAIR(1));
 }
 
 void drawWindow() {
@@ -46,7 +47,8 @@ void drawWindow() {
   drawDefaultTitle();
   mvwhline(song_win, 2, 1, ACS_HLINE, COLS - 2);
   mvwhline(song_win, LINES - 6, 1, ACS_HLINE, COLS - 2);
-  printTime(song_win, LINES - 4, COLS - 8, convertToMins(SONG_DUR));
+  printTime(song_win, LINES - 4, COLS - 8, convertToMins(SONG_DUR),
+            COLOR_PAIR(2));
 
   refresh();
   post_menu(song_menu);
@@ -54,11 +56,13 @@ void drawWindow() {
 }
 
 void printSongDuration() {
-  printTime(song_win, LINES - 4, COLS - 8, convertToMins(SONG_DUR));
+  printTime(song_win, LINES - 4, COLS - 8, convertToMins(SONG_DUR),
+            COLOR_PAIR(2));
 }
 
 void printCurrTime() {
-  printTime(song_win, LINES - 4, 2, convertToMins(SONG_CURRTIME));
+  printTime(song_win, LINES - 4, 2, convertToMins(SONG_CURRTIME),
+            COLOR_PAIR(2));
 }
 
 /* Refreshing Title*/
@@ -74,7 +78,7 @@ void redrawTitle() {
               (COLS / 2) -
                   (strlen(getCurrTitle(song_menu->curitem->index)) / 2),
               strlen(getCurrTitle(song_menu->curitem->index)),
-              getCurrTitle(song_menu->curitem->index), 1);
+              getCurrTitle(song_menu->curitem->index), COLOR_PAIR(1));
   printSongDuration();
   refresh();
 }
@@ -98,21 +102,6 @@ int setupUI() {
     printCurrTime();
 
     drawTicker(song_win);
-
-    // if (checkIfSongFinished()) {
-    //   menu_driver(song_menu, REQ_DOWN_ITEM);
-    //   for (int i = 1; i < COLS - 1; i++) {
-    //     mvprintw(1, i, " ");
-    //   }
-    //   printMiddle(song_win, 1,
-    //               (COLS / 2) -
-    //                   (strlen(getCurrTitle(song_menu->curitem->index)) / 2),
-    //               strlen(getCurrTitle(song_menu->curitem->index)),
-    //               getCurrTitle(song_menu->curitem->index), 1);
-    //
-    //   refresh();
-    //   playNextSong();
-    // }
     handleInput(ch);
   }
 
@@ -131,16 +120,6 @@ void handleInput(int ch) {
     break;
   case '>':
   case KEY_RIGHT:
-    // menu_driver(song_menu, REQ_DOWN_ITEM);
-    // for (int i = 1; i < COLS - 1; i++) {
-    //   mvprintw(1, i, " ");
-    // }
-    // printMiddle(song_win, 1,
-    //             (COLS / 2) -
-    //                 (strlen(getCurrTitle(song_menu->curitem->index)) / 2),
-    //             strlen(getCurrTitle(song_menu->curitem->index)),
-    //             getCurrTitle(song_menu->curitem->index), 1);
-    // refresh();
     playNextSong();
     menu_driver(song_menu, REQ_DOWN_ITEM);
     setSongDur();
@@ -148,16 +127,6 @@ void handleInput(int ch) {
     break;
   case '<':
   case KEY_LEFT:
-    // menu_driver(song_menu, REQ_UP_ITEM);
-    // for (int i = 1; i < COLS - 1; i++) {
-    //   mvprintw(1, i, " ");
-    // }
-    // printMiddle(song_win, 1,
-    //             (COLS / 2) -
-    //                 (strlen(getCurrTitle(song_menu->curitem->index)) / 2),
-    //             strlen(getCurrTitle(song_menu->curitem->index)),
-    //             getCurrTitle(song_menu->curitem->index), 1);
-    // refresh();
     playPrevSong();
     menu_driver(song_menu, REQ_UP_ITEM);
     setSongDur();
@@ -165,30 +134,10 @@ void handleInput(int ch) {
     break;
   case ' ':
     toggleSong();
-    // for (int i = 1; i < COLS - 1; i++) {
-    //   mvprintw(1, i, " ");
-    // }
-    // printMiddle(song_win, 1,
-    //             (COLS / 2) -
-    //                 (strlen(getCurrTitle(song_menu->curitem->index)) / 2),
-    //             strlen(getCurrTitle(song_menu->curitem->index)),
-    //             getCurrTitle(song_menu->curitem->index), 1);
-    //
     redrawTitle();
     refresh();
     break;
   case 'p':
-    // for (int i = 1; i < COLS - 1; i++) {
-    //   mvprintw(1, i, " ");
-    // }
-    // printMiddle(song_win, 1,
-    //             (COLS / 2) -
-    //                 (strlen(getCurrTitle(song_menu->curitem->index)) / 2),
-    //             strlen(getCurrTitle(song_menu->curitem->index)),
-    //             getCurrTitle(song_menu->curitem->index), 1);
-    // int seconds = getSongDuration();
-    // mvwprintw(song_win, 1, COLS - 5, "%d:%d", (seconds / 60) % 60,
-    //           seconds % 60);
     loadSound(song_menu->curitem);
     setSongDur();
     redrawTitle();
