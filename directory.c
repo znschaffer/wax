@@ -22,7 +22,7 @@ void get_files(int *len, char *basePath, char *target[]) {
 
   while ((d_ent = readdir(dir)) != NULL) {
     if (strcmp(d_ent->d_name, ".") != 0 && strcmp(d_ent->d_name, "..") != 0) {
-      fprintf(log_file, "%s\n", d_ent->d_name);
+      // fprintf(log_file, "%s\n", d_ent->d_name);
 
       strcpy(path, basePath);
       strcat(path, "/");
@@ -37,16 +37,86 @@ void get_files(int *len, char *basePath, char *target[]) {
   closedir(dir);
 }
 
-void populateSongItems() {
+void populateArtistItems() {
+
+  if (NULL == Library->songs[0])
+    return;
+
+  char **ar = malloc(100 * sizeof(char *));
+  n_artists = 0;
+  int n_ar = 0;
+
+  for (int i = 0; i < Library->num; i++) {
+    bool unique = true;
+    for (int j = 0; j < n_ar; j++) {
+      if (strcmp(ar[j], Library->songs[i]->artist) == 0) {
+        unique = false;
+      }
+    }
+    if (unique) {
+      ar[n_ar] = strdup(Library->songs[i]->artist);
+      n_ar += 1;
+    }
+  }
+
+  for (int i = 0; i < n_ar; i++) {
+    ITEM *n_item = new_item(ar[i], "");
+    if (NULL == n_item)
+      continue;
+
+    artist_items[n_artists] = n_item;
+    n_artists++;
+  }
+
+  currArtist = artist_items[0]->name.str;
+}
+void populateAlbumItems(char *artist) {
+  if (NULL == Library->songs[0])
+    return;
+
+  char **al = malloc(100 * sizeof(char *));
+  n_albums = 0;
+  int n_al = 0;
+
+  for (int i = 0; i < Library->num; i++) {
+    if (strcmp(Library->songs[i]->artist, artist) == 0) {
+      bool unique = true;
+      for (int j = 0; j < n_al; j++) {
+        if (strcmp(al[j], Library->songs[i]->album) == 0) {
+          unique = false;
+        }
+      }
+      if (unique) {
+        al[n_al] = strdup(Library->songs[i]->album);
+        n_al += 1;
+      }
+    }
+  }
+  for (int i = 0; i < n_al; i++) {
+    ITEM *n_item = new_item(al[i], "");
+    if (NULL == n_item)
+      continue;
+
+    album_items[n_albums] = n_item;
+    n_albums++;
+  }
+
+  currAlbum = album_items[0]->name.str;
+}
+
+void populateSongItems(char *artist, char *album) {
   if (NULL == Library->songs[0])
     return;
   for (int i = 0; i < Library->num; i++) {
-    ITEM *n_item =
-        new_item(Library->songs[i]->artist, Library->songs[i]->title);
-    if (NULL == n_item)
-      continue;
-    song_items[n_songs] = n_item;
-    n_songs++;
+    if ((strcmp(Library->songs[i]->album, album) == 0) &&
+        (strcmp(Library->songs[i]->artist, artist) == 0)) {
+      ITEM *n_item =
+          new_item(Library->songs[i]->artist, Library->songs[i]->title);
+      if (NULL == n_item)
+        continue;
+      song_items[n_songs] = n_item;
+      n_songs++;
+    }
   }
 }
 

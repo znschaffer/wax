@@ -2,10 +2,17 @@
 #include "wax.h"
 
 ITEM **song_items;
+ITEM **album_items;
+ITEM **artist_items;
+
 MENU *song_menu;
 WINDOW *song_win;
 char *title;
+char *currArtist;
+char *currAlbum;
 int n_songs = 0;
+int n_albums = 0;
+int n_artists = 0;
 
 void setupCurses() {
   initscr();
@@ -17,11 +24,6 @@ void setupCurses() {
   curs_set(0);
 }
 
-void logSongItems(void) {
-  for (int i = 0; i < n_songs; i++) {
-    fprintf(log_file, "n_songs:%d:%d\n", i, song_items[i]->index);
-  }
-}
 
 void initWindow() {
   song_menu = new_menu((ITEM **)song_items);
@@ -39,6 +41,24 @@ void initWindow() {
 void drawDefaultTitle() {
   printMiddle(song_win, 1, (COLS / 2) - (strlen(title) / 2), strlen(title),
               title, COLOR_PAIR(1));
+}
+
+void logSongItems(void) {
+  for (int i = 0; i < n_songs; i++) {
+    fprintf(log_file, "n_songs:%d:%s\n", i, song_items[i]->description.str);
+  }
+}
+
+void logAlbumItems() {
+  for (int i = 0; i < n_albums; i++) {
+    fprintf(log_file, "n_albums:%d:%s\n", i, album_items[i]->name.str);
+  }
+}
+
+void logArtistItems() {
+  for (int i = 0; i < n_artists; i++) {
+    fprintf(log_file, "n_artists:%d:%s\n", i, artist_items[i]->name.str);
+  }
 }
 
 void drawWindow() {
@@ -85,12 +105,21 @@ void redrawTitle() {
 
 void setSongTime() { SONG_CURRTIME = getSongTime(); }
 void setSongDur() { SONG_DUR = getSongDuration(); }
+
 int setupUI() {
   int ch;
   setupCurses();
   setupColors();
   song_items = (ITEM **)calloc(400, sizeof(ITEM *));
-  populateSongItems();
+  album_items = (ITEM **)calloc(400, sizeof(ITEM *));
+  artist_items = (ITEM **)calloc(400, sizeof(ITEM *));
+
+  populateArtistItems();
+  // logArtistItems();
+  populateAlbumItems(currArtist);
+  // logAlbumItems();
+  populateSongItems(currArtist, currAlbum);
+  // logSongItems();
 
   /* Set up Window functionality*/
   initWindow();
