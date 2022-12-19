@@ -23,6 +23,19 @@ int n_songs = 0;
 int n_albums = 0;
 int n_artists = 0;
 
+void redrawFocus() {
+  // Reset Colors
+  set_menu_fore(song_menu, A_NORMAL);
+  set_menu_fore(album_menu, A_NORMAL);
+  set_menu_fore(artist_menu, A_NORMAL);
+  set_menu_back(song_menu, A_DIM);
+  set_menu_back(album_menu, A_DIM);
+  set_menu_back(artist_menu, A_DIM);
+
+  // Set Focused Colors
+  set_menu_fore(curr_menu, A_STANDOUT);
+  set_menu_back(curr_menu, A_NORMAL);
+}
 // Logging
 
 void logSongItems(void) {
@@ -74,7 +87,7 @@ void initWindow() {
   artist_win = newwin(LINES - 12, (COLS / 3) - 1, 3, 1);            // 1
   album_win = newwin(LINES - 12, (COLS / 3) - 1, 3, COLS / 3);      // 2
   song_win = newwin(LINES - 12, (COLS / 3), 3, (2 * COLS / 3) - 1); // 3
-
+                                                                    //
   attachMenu(song_menu, song_win);
   attachMenu(artist_menu, artist_win);
   attachMenu(album_menu, album_win);
@@ -144,7 +157,6 @@ void redrawTitle() {
 void setSongTime() { SONG_CURRTIME = getSongTime(); }
 void setSongDur() { SONG_DUR = getSongDuration(); }
 
-
 int setupUI() {
   int ch;
   setupCurses();
@@ -200,8 +212,6 @@ void moveFocusLeft() {
     curr_menu = album_menu;
     curr_win = album_win;
   }
-
-  // wbkgd(curr_win, COLOR_PAIR(4));
 }
 void moveFocusRight() {
   if (curr_menu == song_menu) {
@@ -213,29 +223,33 @@ void moveFocusRight() {
     curr_menu = album_menu;
     curr_win = album_win;
   }
-  // wbkgd(curr_win, COLOR_PAIR(4));
 }
 
 void handleInput(int ch) {
   switch (ch) {
+  case KEY_RESIZE:
+    endwin();
+
+    initMenus();
+    /* Set up Window functionality*/
+    initWindow();
+
+    /* Draw Window UI*/
+    drawWindow();
+
+    /* Draw Menu UI */
+    drawMenus();
+
+    curr_menu = song_menu;
+    curr_win = song_win;
+    refresh();
+    break;
   case 'h':
     moveFocusLeft();
     break;
   case 'l':
     moveFocusRight();
     break;
-  // case 'a':
-  //   curr_menu = artist_menu;
-  //   curr_win = artist_win;
-  //   break;
-  // case 's':
-  //   curr_menu = album_menu;
-  //   curr_win = album_win;
-  //   break;
-  // case 'd':
-  //   curr_menu = song_menu;
-  //   curr_win = song_win;
-  //   break;
   case 'j':
   case KEY_DOWN:
     menu_driver(curr_menu, REQ_DOWN_ITEM);
@@ -243,6 +257,12 @@ void handleInput(int ch) {
   case 'k':
   case KEY_UP:
     menu_driver(curr_menu, REQ_UP_ITEM);
+    break;
+  case ']':
+    skipAhead();
+    break;
+  case '[':
+    skipBack();
     break;
   case '>':
   case KEY_RIGHT:
@@ -270,7 +290,7 @@ void handleInput(int ch) {
       redrawTitle();
 
     } else if (curr_menu == album_menu) {
-      currAlbum = curr_menu->curitem->name.str;
+      currAlbum = (char *)curr_menu->curitem->name.str;
       populateSongItems(currArtist, currAlbum);
       unpost_menu(song_menu);
       set_menu_items(song_menu, song_items);
@@ -282,7 +302,7 @@ void handleInput(int ch) {
       // wrefresh(window);
 
     } else if (curr_menu == artist_menu) {
-      currArtist = curr_menu->curitem->name.str;
+      currArtist = (char *)curr_menu->curitem->name.str;
       populateAlbumItems(currArtist);
 
       populateSongItems(currArtist, currAlbum);
@@ -302,7 +322,10 @@ void handleInput(int ch) {
     refresh();
     break;
   }
-  wrefresh(curr_win);
+  redrawFocus();
+  wrefresh(song_win);
+  wrefresh(album_win);
+  wrefresh(artist_win);
 }
 
 void cleanupUI() { endwin(); }
