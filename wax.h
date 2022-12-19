@@ -120,6 +120,8 @@ extern char *currArtist;
 
 /* Menu list holding songs */
 extern MENU *song_menu;
+extern MENU *artist_menu;
+extern MENU *album_menu;
 
 /** Colors */
 void setupColors();
