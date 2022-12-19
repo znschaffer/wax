@@ -26,7 +26,7 @@ extern bool soundInitialized;
 extern int SONG_CURRTIME;
 extern int SONG_DUR;
 
-void drawTicker(WINDOW *win);
+void drawTicker();
 
 typedef struct directory_ {
   char cwd[1000];
