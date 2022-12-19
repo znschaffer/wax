@@ -35,6 +35,7 @@ typedef struct directory_ {
 } directory_t;
 
 typedef struct song {
+  int track_n;
   char path[300];
   char artist[200];
   char title[200];
@@ -60,6 +61,8 @@ bool checkIfSongFinished();
 
 /* parse audiofile and return a songList with that file as the new head node */
 
+void skipAhead();
+void skipBack();
 int getSongDuration();
 void handle_winch(int sig);
 /* Teardown the audio engine */

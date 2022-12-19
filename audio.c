@@ -23,10 +23,11 @@ int setupMA() {
 void loadSound(ITEM *item) {
   for (int i = 0; i < Library->num; i++) {
     song *s = Library->songs[i];
-    if (0 == (strcmp(item->description.str, s->title)))
-      if (0 == (strcmp(item->name.str, s->artist))) {
-        currSong = s;
-      }
+    if ((0 == (strcmp(currArtist, s->artist))) &&
+        0 == (strcmp(item->description.str, s->title)) &&
+        0 == (strcmp(currAlbum, s->album))) {
+      currSong = s;
+    }
   }
 
   if (NULL == currSong)
@@ -43,6 +44,27 @@ void toggleSong() {
 }
 
 bool isPlaying() { return ma_sound_is_playing(&sound); }
+
+void skipAhead() {
+  if (NULL == currSong && !isPlaying())
+    return;
+  ma_uint64 currentTime;
+  ma_sound_get_cursor_in_pcm_frames(&sound, &currentTime);
+  ma_sound_seek_to_pcm_frame(&sound, (10 * ma_engine_get_sample_rate(&engine)) +
+                                         currentTime);
+}
+
+void skipBack() {
+  if (NULL == currSong && !isPlaying())
+    return;
+  ma_uint64 currentTime;
+  ma_sound_get_cursor_in_pcm_frames(&sound, &currentTime);
+  if (currentTime - ((10 * ma_engine_get_sample_rate(&engine))) < 0) {
+    return;
+  }
+  ma_sound_seek_to_pcm_frame(
+      &sound, currentTime - (10 * ma_engine_get_sample_rate(&engine)));
+}
 
 void playNextSong() {
   if (NULL == currSong)

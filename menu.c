@@ -5,7 +5,7 @@ char title[200];
 char *getCurrTitle(short index) {
   memset(&title[0], 0, sizeof(title));
   strcpy(title, "Now Playing: ");
-  strcat(title, song_items[index]->name.str);
+  strcat(title, currArtist);
   strcat(title, " - ");
   strcat(title, song_items[index]->description.str);
   return title;

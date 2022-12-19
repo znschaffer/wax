@@ -1,3 +1,4 @@
+#include "tag_c.h"
 #include "wax.h"
 #include <dirent.h>
 #include <libgen.h>
@@ -68,13 +69,14 @@ void populateArtistItems() {
     n_artists++;
   }
 
-  currArtist = artist_items[0]->name.str;
+  currArtist = (char *)artist_items[0]->name.str;
 }
 void populateAlbumItems(char *artist) {
   if (NULL == Library->songs[0])
     return;
 
   char **al = malloc(100 * sizeof(char *));
+  memset(album_items, 0, n_albums * sizeof(ITEM *));
   n_albums = 0;
   int n_al = 0;
 
@@ -101,7 +103,26 @@ void populateAlbumItems(char *artist) {
     n_albums++;
   }
 
-  currAlbum = album_items[0]->name.str;
+  currAlbum = (char *)album_items[0]->name.str;
+}
+
+void swap(ITEM *xp, ITEM *yp) {
+  ITEM temp = *xp;
+  *xp = *yp;
+  *yp = temp;
+}
+
+void sortSongItems() {
+  int min_idx;
+  for (int i = 0; i < n_songs - 1; i++) {
+    min_idx = i;
+    for (int j = i + 1; j < n_songs; j++) {
+      if (atoi(song_items[j]->name.str) < atoi(song_items[min_idx]->name.str))
+        min_idx = j;
+    }
+
+    swap(song_items[min_idx], song_items[i]);
+  }
 }
 
 void populateSongItems(char *artist, char *album) {
@@ -112,14 +133,17 @@ void populateSongItems(char *artist, char *album) {
   for (int i = 0; i < Library->num; i++) {
     if ((strcmp(Library->songs[i]->album, album) == 0) &&
         (strcmp(Library->songs[i]->artist, artist) == 0)) {
-      ITEM *n_item =
-          new_item(Library->songs[i]->artist, Library->songs[i]->title);
+
+      char *trackNum = calloc(0, 4 * sizeof(char));
+      sprintf(trackNum, "%d", Library->songs[i]->track_n);
+      ITEM *n_item = new_item(trackNum, Library->songs[i]->title);
       if (NULL == n_item)
         continue;
       song_items[n_songs] = n_item;
       n_songs++;
     }
   }
+  sortSongItems();
 }
 
 void logLibrary(void) {
@@ -149,7 +173,8 @@ int setupDir(char *dirPath) {
   Library->songs = calloc(len, sizeof(song *));
 
   for (int i = start; i < len; i++) {
-    if (strstr(files[i], ".mp3") || strstr(files[i], ".wav")) {
+    if (strstr(files[i], ".mp3") || strstr(files[i], ".wav") ||
+        strstr(files[i], ".flac")) {
       int currNum = Library->num;
       Library->songs[currNum] = calloc(1, sizeof(song));
       file = taglib_file_new(files[i]);
@@ -162,12 +187,16 @@ int setupDir(char *dirPath) {
       if (strcmp(artist, "") == 0) {
         artist = "--";
       }
+      int trackNum = taglib_tag_track(tag);
+      Library->songs[currNum]->track_n = trackNum;
       strcpy(Library->songs[currNum]->artist, artist);
       strcpy(Library->songs[currNum]->title, title);
       strcpy(Library->songs[currNum]->album, taglib_tag_album(tag));
       strcpy(Library->songs[currNum]->path, files[i]);
       Library->songs[currNum]->index = currNum;
       Library->num++;
+      taglib_tag_free_strings();
+      taglib_file_free(file);
     }
   }
 
