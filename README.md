@@ -11,10 +11,20 @@ If you're on OSX:
 brew install taglib ncurses
 export PKG_CONFIG_PATH="/opt/homebrew/opt/ncurses/lib/pkgconfig"
 make
+sudo make install
 ```
 
 ## Usage
 
+Wax is configured through a plaintext file `config` located inside $HOME/.config/wax/.
+
+```
+music_dir = ~/Music
+```
+is the default.
+
+You can also pass in your music directory via the command line flag -d.
+
 ```bash
-wax </audio-directory-here>
+wax -d <dir>
 ```
