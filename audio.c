@@ -21,6 +21,13 @@ int setupMA() {
 }
 
 void loadSound(ITEM *item) {
+
+  if (soundInitialized && strcmp(currSong->title, item->description.str) == 0) {
+    ma_sound_is_playing(&sound) ? ma_sound_stop(&sound)
+                                : ma_sound_start(&sound);
+    return;
+  }
+
   for (int i = 0; i < Library->num; i++) {
     song *s = Library->songs[i];
     if ((0 == (strcmp(currArtist, s->artist))) &&
@@ -37,10 +44,6 @@ void loadSound(ITEM *item) {
   ma_sound_init_from_file(&engine, currSong->path, 0, NULL, NULL, &sound);
   ma_sound_start(&sound);
   soundInitialized = true;
-}
-
-void toggleSong() {
-  ma_sound_is_playing(&sound) ? ma_sound_stop(&sound) : ma_sound_start(&sound);
 }
 
 bool isPlaying() { return ma_sound_is_playing(&sound); }

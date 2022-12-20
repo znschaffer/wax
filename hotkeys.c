@@ -6,7 +6,7 @@ typedef struct {
 } Hotkey;
 
 Hotkey hotkeys[6] = {
-    {.key = '[', .text = "rewind"}, {.key = ']', .text = "fforward"},
+    {.key = '[', .text = "rw"}, {.key = ']', .text = "ff"},
     {.key = ',', .text = "prev"},   {.key = '.', .text = "next"},
     {.key = 'p', .text = "play"},  {.key = 'q', .text = "quit"}};
 
