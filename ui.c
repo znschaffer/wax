@@ -2,6 +2,25 @@
 #include "ncurses.h"
 #include "wax.h"
 
+#define HEIGHT_CUTOFF 12
+
+#define TIME_HEIGHT (LINES - 4)
+#define TICKER_HEIGHT (LINES - 4)
+#define TITLE_HEIGHT (1)
+
+#define TIME_HEIGHT_SHORT (LINES - 4)
+#define TICKER_HEIGHT_SHORT (LINES - 4)
+#define TITLE_HEIGHT_SHORT (4)
+
+#define MENU_LENGTH (LINES - 10)
+#define MENU_FORMAT_LENGTH (LINES - 11)
+#define MENU_WIDTH ((COLS / 4) - 2)
+#define SONG_MENU_WIDTH ((COLS / 2) - 3)
+
+#define WINDOW_LENGTH (LINES - 9)
+#define WINDOW_WIDTH ((COLS / 4) - 1)
+#define SONG_WINDOW_WIDTH ((COLS / 2) - 2)
+
 ITEM **song_items;
 ITEM **album_items;
 ITEM **artist_items;
@@ -69,9 +88,13 @@ void setupCurses() {
 
 void attachMenu(MENU *menu, WINDOW *win) {
   set_menu_win(menu, win);
-  set_menu_sub(menu, derwin(win, LINES - 20, (COLS / 3) - 3, 2, 2));
-  set_menu_format(menu, 20, 1);
-  set_menu_mark(menu, " > ");
+  if (menu == song_menu) {
+    set_menu_sub(menu, derwin(win, MENU_LENGTH, SONG_MENU_WIDTH, 1, 1));
+  } else {
+    set_menu_sub(menu, derwin(win, MENU_LENGTH, MENU_WIDTH, 1, 1));
+  }
+  set_menu_format(menu, MENU_FORMAT_LENGTH, 0);
+  set_menu_mark(menu, "* ");
 }
 
 void initMenus() {
@@ -83,12 +106,11 @@ void initMenus() {
 // Setup all windows and menus
 void setupWindows() {
   window = newwin(0, 0, 0, 0);
-  artist_win = newwin(LINES - 12, (COLS / 3) - 1, 3, 1);            // 1
-  album_win = newwin(LINES - 12, (COLS / 3) - 1, 3, COLS / 3);      // 2
-  song_win = newwin(LINES - 12, (COLS / 3), 3, (2 * COLS / 3) - 1); // 3
+  artist_win = newwin(WINDOW_LENGTH, WINDOW_WIDTH, 3, 1);                 // 1
+  album_win = newwin(WINDOW_LENGTH, WINDOW_WIDTH, 3, (COLS / 4) + 1);     // 2
+  song_win = newwin(WINDOW_LENGTH, SONG_WINDOW_WIDTH, 3, (COLS / 2) + 1); // 3
 
   initMenus();
-
   attachMenu(artist_menu, artist_win);
   attachMenu(album_menu, album_win);
   attachMenu(song_menu, song_win);
@@ -97,8 +119,13 @@ void setupWindows() {
 }
 
 void drawDefaultTitle() {
-  printMiddle(window, 1, (COLS / 2) - (strlen(title) / 2), strlen(title), title,
-              COLOR_PAIR(1));
+  if (LINES < HEIGHT_CUTOFF) {
+    printMiddle(window, TITLE_HEIGHT_SHORT, (COLS / 2) - (strlen(title) / 2),
+                strlen(title), title, COLOR_PAIR(1));
+  } else {
+    printMiddle(window, TITLE_HEIGHT, (COLS / 2) - (strlen(title) / 2),
+                strlen(title), title, COLOR_PAIR(1));
+  }
 }
 
 // Basic UI and outlines for outer window
@@ -106,52 +133,95 @@ void drawWindow() {
   box(window, 0, 0);
   title = "wax";
   drawDefaultTitle();
-  mvwhline(window, 2, 1, ACS_HLINE, COLS - 2);
-  mvwhline(window, LINES - 9, 1, ACS_HLINE, COLS - 2);
-  printTime(window, LINES - 6, COLS - 8, convertToMins(SONG_DUR),
-            COLOR_PAIR(1));
+  if (LINES < HEIGHT_CUTOFF) {
+
+    printTime(window, TIME_HEIGHT_SHORT, COLS - 8, convertToMins(SONG_DUR),
+              COLOR_PAIR(1));
+  } else {
+
+    printTime(window, TIME_HEIGHT, COLS - 8, convertToMins(SONG_DUR),
+              COLOR_PAIR(1));
+  }
   refresh();
   drawHotkeyBar();
+
+  if (LINES < HEIGHT_CUTOFF) {
+  } else {
+    mvwhline(window, 2, 1, ACS_HLINE, COLS - 2);
+    mvwhline(window, LINES - 6, 1, ACS_HLINE, COLS - 2);
+    mvwvline(window, 3, (COLS / 4), ACS_VLINE, LINES - 9);
+    mvwvline(window, 3, (COLS / 2), ACS_VLINE, LINES - 9);
+  }
   wrefresh(window);
 }
 
 // Basic UI for menus
 void drawMenus() {
-  box(song_win, 0, 0);
-  box(artist_win, 0, 0);
-  box(album_win, 0, 0);
+  if (LINES < HEIGHT_CUTOFF) {
+    wrefresh(artist_win);
+    wrefresh(album_win);
+    wrefresh(song_win);
+  } else {
+    post_menu(artist_menu);
+    post_menu(album_menu);
+    post_menu(song_menu);
 
-  post_menu(artist_menu);
-  post_menu(album_menu);
-  post_menu(song_menu);
-
-  wrefresh(artist_win);
-  wrefresh(album_win);
-  wrefresh(song_win);
+    wrefresh(artist_win);
+    wrefresh(album_win);
+    wrefresh(song_win);
+  }
 }
 
 void printSongDuration() {
-  printTime(NULL, LINES - 6, COLS - 8, convertToMins(SONG_DUR), COLOR_PAIR(1));
+  if (LINES < HEIGHT_CUTOFF) {
+    printTime(NULL, TIME_HEIGHT_SHORT, COLS - 8, convertToMins(SONG_DUR),
+              COLOR_PAIR(1));
+  } else {
+
+    printTime(NULL, TIME_HEIGHT, COLS - 8, convertToMins(SONG_DUR),
+              COLOR_PAIR(1));
+  }
 }
 
 void printCurrTime() {
-  printTime(NULL, LINES - 6, 2, convertToMins(SONG_CURRTIME), COLOR_PAIR(1));
+
+  if (LINES < HEIGHT_CUTOFF) {
+    printTime(NULL, TIME_HEIGHT_SHORT, 2, convertToMins(SONG_CURRTIME),
+              COLOR_PAIR(1));
+  } else {
+    printTime(NULL, TIME_HEIGHT, 2, convertToMins(SONG_CURRTIME),
+              COLOR_PAIR(1));
+  }
 }
 
 /* Refreshing Title*/
 void redrawBlank() {
-  for (int i = 1; i < COLS - 2; i++) {
-    mvprintw(1, i, " ");
+  if (LINES < HEIGHT_CUTOFF) {
+    for (int i = 1; i < COLS - 2; i++) {
+      mvprintw(TITLE_HEIGHT_SHORT, i, " ");
+    }
+  } else {
+    for (int i = 1; i < COLS - 2; i++) {
+      mvprintw(TITLE_HEIGHT, i, " ");
+    }
   }
 }
 
 void redrawTitle() {
   redrawBlank();
-  printMiddle(NULL, 0,
-              (COLS / 2) -
-                  (strlen(getCurrTitle(song_menu->curitem->index)) / 2),
-              strlen(getCurrTitle(song_menu->curitem->index)),
-              getCurrTitle(song_menu->curitem->index), COLOR_PAIR(1));
+  if (LINES < HEIGHT_CUTOFF) {
+    printMiddle(NULL, TITLE_HEIGHT_SHORT,
+                (COLS / 2) -
+                    (strlen(getCurrTitle(song_menu->curitem->index)) / 2),
+                strlen(getCurrTitle(song_menu->curitem->index)),
+                getCurrTitle(song_menu->curitem->index), COLOR_PAIR(1));
+  } else {
+    printMiddle(NULL, TITLE_HEIGHT,
+                (COLS / 2) -
+                    (strlen(getCurrTitle(song_menu->curitem->index)) / 2),
+                strlen(getCurrTitle(song_menu->curitem->index)),
+                getCurrTitle(song_menu->curitem->index), COLOR_PAIR(1));
+  }
   printSongDuration();
   refresh();
 }
@@ -225,6 +295,7 @@ void moveFocusRight() {
 void handleInput(int ch) {
   switch (ch) {
   case KEY_RESIZE:
+    clear();
     endwin();
 
     initMenus();
@@ -235,6 +306,8 @@ void handleInput(int ch) {
     /* Draw Menu UI */
     drawMenus();
 
+    drawTicker();
+    redrawTitle();
     curr_menu = song_menu;
     curr_win = song_win;
     refresh();

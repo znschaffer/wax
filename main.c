@@ -30,11 +30,7 @@ int main(int argc, char **argv) {
   bool dirflag;
   const char *home = getenv("HOME");
   char *configpath = calloc(0, 250 * sizeof(char));
-
-  // strlcpy(logfilepath, home, 250);
-  // strlcat(logfilepath, "/.config/wax", 250);
-  // strlcat(logfilepath, "/wax.log", 250);
-  log_file = fopen("wax.log", "a+");
+  char *logfilepath = calloc(0, 250 * sizeof(char));
 
   strlcpy(configpath, home, 250);
   strlcat(configpath, "/.config/wax", 250);
@@ -47,6 +43,10 @@ int main(int argc, char **argv) {
     fprintf(c_f, "music_dir = %s/Music\n", home);
   }
 
+  strlcpy(logfilepath, home, 250);
+  strlcat(logfilepath, "/.config/wax", 250);
+  strlcat(logfilepath, "/wax.log", 250);
+  log_file = fopen(logfilepath, "a+");
   int opt;
   while ((opt = getopt(argc, argv, "cdh")) != -1) {
     switch (opt) {

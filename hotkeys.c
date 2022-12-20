@@ -11,12 +11,19 @@ Hotkey hotkeys[6] = {
     {.key = 'p', .text = "play/pause"}, {.key = 'q', .text = "quit"}};
 
 void drawHotkeyBar() {
+  int colBuffer = COLS / 10;
   int i;
+  if ((LINES < 10) || (COLS < 75)) {
+    return;
+  }
+
   for (i = 0; i < 6; i++) {
     wattron(stdscr, COLOR_PAIR(2));
-    mvprintw(LINES - 2, ((COLS / 5.6) * i) + 2, " %c ", hotkeys[i].key);
+    mvprintw(LINES - 2, ((((COLS - colBuffer) / 6)) * i) + colBuffer, " %c ",
+             hotkeys[i].key);
     wattron(stdscr, COLOR_PAIR(1));
-    mvprintw(LINES - 2, ((COLS / 5.6) * i) + 5, " %s ", hotkeys[i].text);
+    mvprintw(LINES - 2, ((((COLS - colBuffer) / 6)) * i) + colBuffer + 3,
+             " %s ", hotkeys[i].text);
     wattroff(stdscr, COLOR_PAIR(1));
   }
 }
