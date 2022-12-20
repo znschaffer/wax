@@ -1,11 +1,12 @@
 #include "wax.h"
 #include <ncursesw/menu.h>
 
+#define TICKER_HEIGHT (LINES - 4)
+
 int SONG_CURRTIME = 0;
 int SONG_DUR = 0;
-int TICKER_START = 9;
+int TICKER_START;
 int TICKER_END;
-int TICKER_HEIGHT;
 int TICKER_LENGTH;
 
 float percentPlayed() {
@@ -20,8 +21,8 @@ int PLAYED_LENGTH() { return (int)(percentPlayed() * TICKER_LENGTH); }
 void drawTime(WINDOW *win) {}
 
 void drawTicker() {
-  TICKER_END = COLS - 20;
-  TICKER_HEIGHT = LINES - 6;
+  TICKER_START = (COLS / 14) + 5;
+  TICKER_END = COLS - (TICKER_START * 2) - 1;
   TICKER_LENGTH = TICKER_END - TICKER_START;
 
   wattron(stdscr, COLOR_PAIR(1));
