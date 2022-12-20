@@ -260,6 +260,7 @@ int setupUI() {
     handleInput(ch);
   }
 
+  cleanupUI();
   return 0;
 }
 
