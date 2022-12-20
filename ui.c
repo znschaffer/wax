@@ -279,7 +279,7 @@ void handleInput(int ch) {
     redrawTitle();
     break;
   case ' ':
-    toggleSong();
+    // toggleSong();
     redrawTitle();
     refresh();
     break;
