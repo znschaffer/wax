@@ -36,8 +36,8 @@ void redrawFocus() {
   set_menu_fore(curr_menu, A_STANDOUT);
   set_menu_back(curr_menu, A_NORMAL);
 }
-// Logging
 
+// Logging
 void logSongItems(void) {
   for (int i = 0; i < n_songs; i++) {
     fprintf(log_file, "n_songs:%d:%s\n", i, song_items[i]->description.str);
@@ -79,20 +79,21 @@ void initMenus() {
   artist_menu = new_menu((ITEM **)artist_items);
   album_menu = new_menu((ITEM **)album_items);
 }
-// Setup all windows and menus
-void initWindow() {
 
-  /* Init windows */
+// Setup all windows and menus
+void setupWindows() {
   window = newwin(0, 0, 0, 0);
   artist_win = newwin(LINES - 12, (COLS / 3) - 1, 3, 1);            // 1
   album_win = newwin(LINES - 12, (COLS / 3) - 1, 3, COLS / 3);      // 2
   song_win = newwin(LINES - 12, (COLS / 3), 3, (2 * COLS / 3) - 1); // 3
-                                                                    //
-  attachMenu(song_menu, song_win);
+
+  initMenus();
+
   attachMenu(artist_menu, artist_win);
   attachMenu(album_menu, album_win);
+  attachMenu(song_menu, song_win);
 
-  keypad(album_win, TRUE);
+  keypad(song_win, TRUE);
 }
 
 void drawDefaultTitle() {
@@ -107,9 +108,10 @@ void drawWindow() {
   drawDefaultTitle();
   mvwhline(window, 2, 1, ACS_HLINE, COLS - 2);
   mvwhline(window, LINES - 9, 1, ACS_HLINE, COLS - 2);
-  printTime(window, LINES - 4, COLS - 8, convertToMins(SONG_DUR),
-            COLOR_PAIR(2));
+  printTime(window, LINES - 6, COLS - 8, convertToMins(SONG_DUR),
+            COLOR_PAIR(1));
   refresh();
+  drawHotkeyBar();
   wrefresh(window);
 }
 
@@ -123,17 +125,17 @@ void drawMenus() {
   post_menu(album_menu);
   post_menu(song_menu);
 
-  wrefresh(song_win);
-  wrefresh(album_win);
   wrefresh(artist_win);
+  wrefresh(album_win);
+  wrefresh(song_win);
 }
 
 void printSongDuration() {
-  printTime(NULL, LINES - 4, COLS - 8, convertToMins(SONG_DUR), COLOR_PAIR(2));
+  printTime(NULL, LINES - 6, COLS - 8, convertToMins(SONG_DUR), COLOR_PAIR(1));
 }
 
 void printCurrTime() {
-  printTime(NULL, LINES - 4, 2, convertToMins(SONG_CURRTIME), COLOR_PAIR(2));
+  printTime(NULL, LINES - 6, 2, convertToMins(SONG_CURRTIME), COLOR_PAIR(1));
 }
 
 /* Refreshing Title*/
@@ -166,15 +168,11 @@ int setupUI() {
   artist_items = (ITEM **)calloc(400, sizeof(ITEM *));
 
   populateArtistItems();
-  // logArtistItems();
   populateAlbumItems(currArtist);
-  // logAlbumItems();
   populateSongItems(currArtist, currAlbum);
-  // logSongItems();
 
-  initMenus();
   /* Set up Window functionality*/
-  initWindow();
+  setupWindows();
 
   /* Draw Window UI*/
   drawWindow();
@@ -188,7 +186,6 @@ int setupUI() {
   while ('q' != (ch = getch())) {
     setSongTime();
     printCurrTime();
-
     drawTicker();
     handleInput(ch);
   }
@@ -232,11 +229,9 @@ void handleInput(int ch) {
 
     initMenus();
     /* Set up Window functionality*/
-    initWindow();
-
+    setupWindows();
     /* Draw Window UI*/
     drawWindow();
-
     /* Draw Menu UI */
     drawMenus();
 
@@ -264,15 +259,19 @@ void handleInput(int ch) {
   case '[':
     skipBack();
     break;
-  case '>':
+  case KEY_LEFT:
+    moveFocusLeft();
+    break;
   case KEY_RIGHT:
+    moveFocusRight();
+    break;
+  case '.':
     playNextSong();
     menu_driver(curr_menu, REQ_DOWN_ITEM);
     setSongDur();
     redrawTitle();
     break;
-  case '<':
-  case KEY_LEFT:
+  case ',':
     playPrevSong();
     menu_driver(curr_menu, REQ_UP_ITEM);
     setSongDur();
@@ -288,35 +287,22 @@ void handleInput(int ch) {
       loadSound(curr_menu->curitem);
       setSongDur();
       redrawTitle();
-
     } else if (curr_menu == album_menu) {
       currAlbum = (char *)curr_menu->curitem->name.str;
       populateSongItems(currArtist, currAlbum);
       unpost_menu(song_menu);
       set_menu_items(song_menu, song_items);
-      // drawWindow();
       drawMenus();
-      // wrefresh(song_win);
-      // wrefresh(album_win);
-      // wrefresh(artist_win);
-      // wrefresh(window);
-
     } else if (curr_menu == artist_menu) {
       currArtist = (char *)curr_menu->curitem->name.str;
       populateAlbumItems(currArtist);
-
       populateSongItems(currArtist, currAlbum);
 
       unpost_menu(album_menu);
       set_menu_items(album_menu, album_items);
       unpost_menu(song_menu);
       set_menu_items(song_menu, song_items);
-      // drawWindow();
       drawMenus();
-      // wrefresh(song_win);
-      // wrefresh(album_win);
-      // wrefresh(artist_win);
-      // wrefresh(window);
     }
 
     refresh();

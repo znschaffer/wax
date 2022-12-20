@@ -21,7 +21,7 @@ void drawTime(WINDOW *win) {}
 
 void drawTicker() {
   TICKER_END = COLS - 20;
-  TICKER_HEIGHT = LINES - 4;
+  TICKER_HEIGHT = LINES - 6;
   TICKER_LENGTH = TICKER_END - TICKER_START;
 
   wattron(stdscr, COLOR_PAIR(1));

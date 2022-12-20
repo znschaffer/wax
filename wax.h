@@ -33,6 +33,7 @@ extern int SONG_CURRTIME;
 extern int SONG_DUR;
 
 void drawTicker();
+void drawHotkeyBar();
 
 typedef struct directory_ {
   char cwd[1000];
