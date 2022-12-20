@@ -15,7 +15,7 @@ $(BIN): $(OBJECTS)
 	$(CC) -c $^ $(CFLAGS) -o $@
 
 clean:
-	rm -f $(OBJECTS) $(BIN).o $(BIN) ($BIN).log
+	rm -f $(OBJECTS) $(BIN).o $(BIN) $(BIN).log
 
 .PHONY: install
 install:
