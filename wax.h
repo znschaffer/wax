@@ -18,6 +18,12 @@ typedef struct {
   char timestring[20];
 } Time;
 
+typedef struct {
+    char music_dir[256];
+} CONFIG;
+
+extern CONFIG *config;
+
 Time convertToMins(int sec);
 
 void printTime(WINDOW *window, int rows, int cols, Time time, chtype color);
