@@ -7,6 +7,7 @@ SOURCES = $(wildcard *.c)
 OBJECTS = $(SOURCES:.c=.o)
 
 all: $(BIN)
+	mkdir -p ~/.config/wax
 
 $(BIN): $(OBJECTS)
 	$(CC) $^ $(CFLAGS) $(LDFLAGS) -o $@
@@ -19,7 +20,6 @@ clean:
 
 .PHONY: install
 install:
-	mkdir -p ~/.config/wax
 	mkdir -p $(DESTDIR)$(PREFIX)/$(BINDIR)
 	cp -f $(BIN) $(DESTDIR)$(PREFIX)/$(BINDIR)
 

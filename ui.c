@@ -277,12 +277,7 @@ void handleInput(int ch) {
     setSongDur();
     redrawTitle();
     break;
-  case ' ':
-    toggleSong();
-    redrawTitle();
-    refresh();
-    break;
-  case 10:
+  case 'p':
     if (curr_menu == song_menu) {
       loadSound(curr_menu->curitem);
       setSongDur();

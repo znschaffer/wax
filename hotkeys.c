@@ -6,9 +6,9 @@ typedef struct {
 } Hotkey;
 
 Hotkey hotkeys[6] = {
-    {.key = '[', .text = "rewind"},     {.key = ']', .text = "fforward"},
-    {.key = ',', .text = "prev"},       {.key = '.', .text = "next"},
-    {.key = 'p', .text = "play/pause"}, {.key = 'q', .text = "quit"}};
+    {.key = '[', .text = "rewind"}, {.key = ']', .text = "fforward"},
+    {.key = ',', .text = "prev"},   {.key = '.', .text = "next"},
+    {.key = 'p', .text = "play"},  {.key = 'q', .text = "quit"}};
 
 void drawHotkeyBar() {
   int i;

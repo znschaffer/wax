@@ -30,8 +30,16 @@ int main(int argc, char **argv) {
   bool dirflag;
   const char *home = getenv("HOME");
   char *configpath = calloc(0, 250 * sizeof(char));
+
+  // strlcpy(logfilepath, home, 250);
+  // strlcat(logfilepath, "/.config/wax", 250);
+  // strlcat(logfilepath, "/wax.log", 250);
+  log_file = fopen("wax.log", "a+");
+
   strlcpy(configpath, home, 250);
-  strlcat(configpath, "/.config/wax/config", 250);
+  strlcat(configpath, "/.config/wax", 250);
+  strlcat(configpath, "/config", 250);
+
   if (access(configpath, F_OK) == 0) {
     c_f = fopen(configpath, "r");
   } else {
@@ -39,7 +47,6 @@ int main(int argc, char **argv) {
     fprintf(c_f, "music_dir = %s/Music\n", home);
   }
 
-  int ret;
   int opt;
   while ((opt = getopt(argc, argv, "cdh")) != -1) {
     switch (opt) {
@@ -56,7 +63,6 @@ int main(int argc, char **argv) {
   while (fgets(buf, sizeof buf, c_f)) {
     parse_config(buf);
   }
-  log_file = fopen("wax.log", "a+");
   fprintf(log_file, "config: %s\n", config->music_dir);
 
   if (dirflag) {
@@ -67,7 +73,7 @@ int main(int argc, char **argv) {
                     "dirname` or in your config file.\n");
     return -1;
   }
-  ret = setupDir(config->music_dir);
+  int ret = setupDir(config->music_dir);
   if (0 != ret) {
     // fprintf(stderr, "failed to load directory %s", argv[1]);
     fclose(log_file);
