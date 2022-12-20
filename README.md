@@ -16,7 +16,7 @@ sudo make install
 
 ## Usage
 
-Wax is configured through a plaintext file `config` located inside $HOME/.config/wax/.
+Wax is configured through a plaintext file `config` located inside `$HOME/.config/wax/`.
 
 ```
 music_dir = ~/Music
