@@ -1,5 +1,5 @@
 BIN = wax
-CFLAGS=-g -Wall $(shell pkg-config --cflags menu ncurses taglib_c)
+CFLAGS=-g -Wall $(shell pkg-config --cflags menu ncurses taglib_c) 
 LDFLAGS= $(shell pkg-config --libs menu ncurses taglib_c)
 PREFIX = /usr/local
 BINDIR = bin
@@ -7,7 +7,6 @@ SOURCES = $(wildcard *.c)
 OBJECTS = $(SOURCES:.c=.o)
 
 all: $(BIN)
-	mkdir -p ~/.config/wax
 
 $(BIN): $(OBJECTS)
 	$(CC) $^ $(CFLAGS) $(LDFLAGS) -o $@

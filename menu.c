@@ -4,10 +4,18 @@ char title[200];
 
 char *getCurrTitle(short index) {
   memset(&title[0], 0, sizeof(title));
-  strcpy(title, "Now Playing: ");
-  strcat(title, currArtist);
-  strcat(title, " - ");
-  strcat(title, song_items[index]->description.str);
+  if (isPlaying()) {
+    strcpy(title, "Now Playing: ");
+    strcat(title, currArtist);
+    strcat(title, " - ");
+    strcat(title, song_items[index]->description.str);
+  } else {
+
+    strcpy(title, "Paused: ");
+    strcat(title, currArtist);
+    strcat(title, " - ");
+    strcat(title, song_items[index]->description.str);
+  }
   return title;
 }
 

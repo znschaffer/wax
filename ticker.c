@@ -25,9 +25,9 @@ void drawTicker() {
   TICKER_END = COLS - (TICKER_START * 2) - 1;
   TICKER_LENGTH = TICKER_END - TICKER_START;
 
-  wattron(stdscr, COLOR_PAIR(1));
+  wattron(stdscr, COLOR_PAIR(2));
   mvhline(TICKER_HEIGHT, TICKER_START, ACS_VLINE, TICKER_END);
-  wattroff(stdscr, COLOR_PAIR(1));
+  wattroff(stdscr, COLOR_PAIR(2));
   mvhline(TICKER_HEIGHT, TICKER_START, ACS_CKBOARD, PLAYED_LENGTH());
   refresh();
 }

@@ -1,10 +1,16 @@
+#include "curses.h"
 #include "wax.h"
 
 void setupColors() {
   start_color();
+  assume_default_colors(config->fg, config->bg);
+  // main fg + bg
+  init_pair(1, config->fg, config->bg);
 
-  init_pair(0, COLOR_BLACK, COLOR_WHITE);
-  init_pair(1, COLOR_CYAN, COLOR_BLACK);
-  init_pair(2, COLOR_BLACK, COLOR_CYAN);
-  init_pair(3, COLOR_WHITE, COLOR_BLACK);
+  // main highlight
+  init_pair(2, config->hl, config->bg);
+
+  // reverse highlight
+  init_pair(3, config->bg, config->hl);
+
 }

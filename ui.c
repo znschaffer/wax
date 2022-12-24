@@ -121,10 +121,10 @@ void setupWindows() {
 void drawDefaultTitle() {
   if (LINES < HEIGHT_CUTOFF) {
     printMiddle(window, TITLE_HEIGHT_SHORT, (COLS / 2) - (strlen(title) / 2),
-                strlen(title), title, COLOR_PAIR(1));
+                strlen(title), title, COLOR_PAIR(2));
   } else {
     printMiddle(window, TITLE_HEIGHT, (COLS / 2) - (strlen(title) / 2),
-                strlen(title), title, COLOR_PAIR(1));
+                strlen(title), title, COLOR_PAIR(2));
   }
 }
 
@@ -136,11 +136,11 @@ void drawWindow() {
   if (LINES < HEIGHT_CUTOFF) {
 
     printTime(window, TIME_HEIGHT_SHORT, COLS - 8, convertToMins(SONG_DUR),
-              COLOR_PAIR(1));
+              COLOR_PAIR(2));
   } else {
 
     printTime(window, TIME_HEIGHT, COLS - 8, convertToMins(SONG_DUR),
-              COLOR_PAIR(1));
+              COLOR_PAIR(2));
   }
   refresh();
   drawHotkeyBar();
@@ -175,11 +175,11 @@ void drawMenus() {
 void printSongDuration() {
   if (LINES < HEIGHT_CUTOFF) {
     printTime(NULL, TIME_HEIGHT_SHORT, COLS - 8, convertToMins(SONG_DUR),
-              COLOR_PAIR(1));
+              COLOR_PAIR(2));
   } else {
 
     printTime(NULL, TIME_HEIGHT, COLS - 8, convertToMins(SONG_DUR),
-              COLOR_PAIR(1));
+              COLOR_PAIR(2));
   }
 }
 
@@ -187,10 +187,10 @@ void printCurrTime() {
 
   if (LINES < HEIGHT_CUTOFF) {
     printTime(NULL, TIME_HEIGHT_SHORT, 2, convertToMins(SONG_CURRTIME),
-              COLOR_PAIR(1));
+              COLOR_PAIR(2));
   } else {
     printTime(NULL, TIME_HEIGHT, 2, convertToMins(SONG_CURRTIME),
-              COLOR_PAIR(1));
+              COLOR_PAIR(2));
   }
 }
 
@@ -214,13 +214,13 @@ void redrawTitle() {
                 (COLS / 2) -
                     (strlen(getCurrTitle(song_menu->curitem->index)) / 2),
                 strlen(getCurrTitle(song_menu->curitem->index)),
-                getCurrTitle(song_menu->curitem->index), COLOR_PAIR(1));
+                getCurrTitle(song_menu->curitem->index), COLOR_PAIR(2));
   } else {
     printMiddle(NULL, TITLE_HEIGHT,
                 (COLS / 2) -
                     (strlen(getCurrTitle(song_menu->curitem->index)) / 2),
                 strlen(getCurrTitle(song_menu->curitem->index)),
-                getCurrTitle(song_menu->curitem->index), COLOR_PAIR(1));
+                getCurrTitle(song_menu->curitem->index), COLOR_PAIR(2));
   }
   printSongDuration();
   refresh();
@@ -258,6 +258,7 @@ int setupUI() {
     printCurrTime();
     drawTicker();
     handleInput(ch);
+    drawHotkeyBar();
   }
 
   cleanupUI();

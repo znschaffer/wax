@@ -1,6 +1,7 @@
 #ifndef WAX_H
 #define WAX_H
 
+#include "ncurses.h"
 #include <ftw.h>
 #include <ncursesw/menu.h>
 #include <ncursesw/ncurses.h>
@@ -20,8 +21,12 @@ typedef struct {
 
 typedef struct {
     char music_dir[256];
+    int bg;
+    int fg;
+    int hl;
 } CONFIG;
 
+int parse_config(char *buf);
 extern CONFIG *config;
 
 Time convertToMins(int sec);

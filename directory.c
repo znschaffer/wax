@@ -2,6 +2,7 @@
 #include "wax.h"
 #include <dirent.h>
 #include <libgen.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
@@ -13,28 +14,64 @@ size_t total_files = 0;
 library_t *Library;
 directory_t *current_directory_ = NULL;
 
-void get_files(int *len, char *basePath, char *target[]) {
-  char path[1000];
+void get_num_of_files(uint64_t *len, char *basePath) {
+  char *path = calloc(100, sizeof(char));
   struct dirent *d_ent;
   DIR *dir = opendir(basePath);
 
-  if (!dir)
+  if (!dir) {
+    free(path);
     return;
+  }
 
   while ((d_ent = readdir(dir)) != NULL) {
     if (strcmp(d_ent->d_name, ".") != 0 && strcmp(d_ent->d_name, "..") != 0) {
-      // fprintf(log_file, "%s\n", d_ent->d_name);
+
+      strcpy(path, basePath);
+      strcat(path, "/");
+      strcat(path, d_ent->d_name);
+
+      get_num_of_files(len, path);
+
+      if (strstr(d_ent->d_name, ".mp3") || strstr(d_ent->d_name, ".wav") ||
+          strstr(d_ent->d_name, ".flac")) {
+        *len += 1;
+      }
+    }
+  }
+
+  free(path);
+  closedir(dir);
+}
+
+void get_files(int *len, char *basePath, char *target[]) {
+  char *path = calloc(100, sizeof(char));
+  struct dirent *d_ent;
+  DIR *dir = opendir(basePath);
+
+  if (!dir) {
+    free(path);
+    return;
+  }
+
+  while ((d_ent = readdir(dir)) != NULL) {
+    if (strcmp(d_ent->d_name, ".") != 0 && strcmp(d_ent->d_name, "..") != 0) {
 
       strcpy(path, basePath);
       strcat(path, "/");
       strcat(path, d_ent->d_name);
 
       get_files(len, path, target);
-      target[*len] = strdup(path);
-      *len += 1;
+
+      if (strstr(d_ent->d_name, ".mp3") || strstr(d_ent->d_name, ".wav") ||
+          strstr(d_ent->d_name, ".flac")) {
+        target[*len] = strdup(path);
+        *len += 1;
+      }
     }
   }
 
+  free(path);
   closedir(dir);
 }
 
@@ -70,6 +107,7 @@ void populateArtistItems() {
   }
 
   currArtist = (char *)artist_items[0]->name.str;
+  free(ar);
 }
 void populateAlbumItems(char *artist) {
   if (NULL == Library->songs[0])
@@ -104,6 +142,7 @@ void populateAlbumItems(char *artist) {
   }
 
   currAlbum = (char *)album_items[0]->name.str;
+  free(al);
 }
 
 void swap(ITEM *xp, ITEM *yp) {
@@ -157,18 +196,9 @@ int setupDir(char *dirPath) {
   Library = calloc(0, sizeof(*Library));
   Library->num = 0;
 
-  current_directory_ = (directory_t *)malloc(sizeof(directory_t));
-
-  if (current_directory_ == NULL) {
-    printf("Error Occured.\n");
-    exit(0);
-  }
-
-  getcwd(current_directory_->cwd, sizeof(current_directory_->cwd));
-  strcat(current_directory_->cwd, "/");
-  strcat(current_directory_->cwd, dirPath);
-
-  char *files[200];
+  uint64_t file_num = 0;
+  get_num_of_files(&file_num, dirPath);
+  char *files[file_num];
   get_files(&len, dirPath, files);
   Library->songs = calloc(len, sizeof(song *));
 
@@ -197,6 +227,7 @@ int setupDir(char *dirPath) {
       Library->num++;
       taglib_tag_free_strings();
       taglib_file_free(file);
+      free(files[i]);
     }
   }
 

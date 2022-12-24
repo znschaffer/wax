@@ -1,5 +1,6 @@
 #include "wax.h"
 #include <errno.h>
+#include <stdio.h>
 #include <string.h>
 #include <unistd.h>
 #include <wordexp.h>
@@ -7,45 +8,42 @@ FILE *log_file;
 
 CONFIG *config;
 
-int parse_config(char *buf) {
-  char dummy[256];
-  char unformatted_dir[256];
-  if (sscanf(buf, " %s", dummy) == EOF)
-    return 0; // blank line
-  if (sscanf(buf, " %[#]", dummy) == 1)
-    return 0; // comment
-  if (sscanf(buf, " music_dir = %s", unformatted_dir) == 1) {
-    wordexp_t exp_result;
-    wordexp(unformatted_dir, &exp_result, 0);
-    strcpy(config->music_dir, exp_result.we_wordv[0]);
-    wordfree(&exp_result);
-    return 0;
-  }
-  return 3;
-}
-
 int main(int argc, char **argv) {
-  config = calloc(0, sizeof(CONFIG));
-  FILE *c_f;
+  config = &(CONFIG){.bg = COLOR_BLACK, .fg = COLOR_WHITE, .hl = COLOR_CYAN};
   bool dirflag;
   const char *home = getenv("HOME");
-  char *configpath = calloc(0, 250 * sizeof(char));
+  char *configfolder;
+  char *configfile;
   char *logfilepath = calloc(0, 250 * sizeof(char));
 
-  strlcpy(configpath, home, 250);
-  strlcat(configpath, "/.config/wax", 250);
-  strlcat(configpath, "/config", 250);
+  asprintf(&configfolder, "%s/.config/wax", home);
+  asprintf(&configfile, "%s/config", configfolder);
 
-  if (access(configpath, F_OK) == 0) {
-    c_f = fopen(configpath, "r");
-  } else {
-    c_f = fopen(configpath, "w");
-    fprintf(c_f, "music_dir = %s/Music\n", home);
+  mkdir(configfolder, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+
+  if (access(configfile, F_OK) != 0) {
+    FILE *newConfig = fopen(configfile, "w");
+    fprintf(newConfig,
+            "# Path to your music\n"
+            "music_dir = %s/Music\n\n"
+            "# Background ANSI color\n"
+            "bg = 7\n\n"
+            "# Foreground ANSI color\n"
+            "fg = 0\n\n"
+            "# Highlight ANSI color\n"
+            "hl = 4",
+            home);
+    fclose(newConfig);
   }
+
+  FILE *c_f = fopen(configfile, "r");
+  free(configfile);
+  free(configfolder);
 
   strlcpy(logfilepath, home, 250);
   strlcat(logfilepath, "/.config/wax", 250);
   strlcat(logfilepath, "/wax.log", 250);
+
   log_file = fopen(logfilepath, "a+");
   int opt;
   while ((opt = getopt(argc, argv, "cdh")) != -1) {
@@ -60,9 +58,12 @@ int main(int argc, char **argv) {
   }
 
   char buf[256];
+
   while (fgets(buf, sizeof buf, c_f)) {
     parse_config(buf);
   }
+
+  fclose(c_f);
   fprintf(log_file, "config: %s\n", config->music_dir);
 
   if (dirflag) {
