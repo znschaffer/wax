@@ -2,6 +2,9 @@
 
 A terminal audio player written in `C` with `ncurses`.
 
+![image](https://user-images.githubusercontent.com/77255525/210126063-42d950c3-c967-4d3c-969c-664fc2dc7912.png)
+![image](https://user-images.githubusercontent.com/77255525/210126042-1cc3ae59-755e-4dfb-add7-5877b52438e0.png)
+
 ## Dependancies
 
 We make use of [TagLib](https://taglib.org/) for audio metadata and [ncurses](https://invisible-island.net/ncurses/) for our UI.
